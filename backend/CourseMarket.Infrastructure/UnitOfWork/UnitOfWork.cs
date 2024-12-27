@@ -1,10 +1,12 @@
 ﻿using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Infrastructure.Context;
 
+namespace CourseMarket.Infrastructure.UnitOfWork;
+
 public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
-    public async Task<int> CompleteAsync()
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await context.SaveChangesAsync();
+        return context.SaveChangesAsync(cancellationToken);
     }
 }
