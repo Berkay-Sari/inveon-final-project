@@ -2,16 +2,15 @@
 
 namespace CourseMarket.Domain.Entities;
 
-public class Order : BaseEntity<Guid>
+public class Order : BaseEntity<Guid>, IAuditEntity
 {
     public Guid BuyerId { get; set; }
-
-    public Guid CourseId { get; set; }
-
-    public DateTime OrderDate { get; set; }
+    public int PaymentId { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
     // Navigation Properties
     public AppUser? Buyer { get; set; }
-    public Course? Course { get; set; }
+    public ICollection<Course> Courses { get; set; } = new List<Course>();
     public Payment? Payment { get; set; }
 }

@@ -2,7 +2,7 @@
 
 public interface IAuditEntity
 {
-    public DateTime Created { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public DateTime? Updated { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 }

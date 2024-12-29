@@ -1,25 +1,39 @@
 using CourseMarket.Application.Interfaces.Repositories;
+using CourseMarket.Application.Interfaces.Repositories.Course;
+using CourseMarket.Application.Interfaces.Services;
 using CourseMarket.Application.Interfaces.UnitOfWork;
+using CourseMarket.Application.Validators.Courses;
 using CourseMarket.Domain.Entities;
+using CourseMarket.Infrastructure.Concretes.Repositories;
+using CourseMarket.Infrastructure.Concretes.Repositories.Course;
+using CourseMarket.Infrastructure.Concretes.Services;
+using CourseMarket.Infrastructure.Concretes.Services.Filters;
 using CourseMarket.Infrastructure.Context;
-using CourseMarket.Infrastructure.Repositories;
 using CourseMarket.Infrastructure.UnitOfWork;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCourseValidator>();
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
+    .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
-builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped(typeof(IRepository<,>), typeof(GenericRepository<,>));
+
+builder.Services.AddScoped(typeof(IReadRepository<,>), typeof(ReadRepository<,>));
+builder.Services.AddScoped(typeof(IWriteRepository<,>), typeof(WriteRepository<,>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<ICourseReadRepository, CourseReadRepository>();
+builder.Services.AddScoped<ICourseWriteRepository, CourseWriteRepository>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
     {

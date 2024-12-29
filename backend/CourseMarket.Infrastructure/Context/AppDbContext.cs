@@ -1,4 +1,5 @@
-﻿using CourseMarket.Domain.Entities;
+﻿using CourseMarket.Domain.Common;
+using CourseMarket.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,35 +16,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Course>()
-            .HasOne(c => c.Instructor)
-            .WithMany(u => u!.Courses)
-            .HasForeignKey(c => c.InstructorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.Buyer)
-            .WithMany(u => u!.Orders)
-            .HasForeignKey(o => o.BuyerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.Course)
-            .WithMany(c => c!.Orders)
-            .HasForeignKey(o => o.CourseId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Payment>()
-            .HasOne(p => p.Order)
-            .WithOne(o => o!.Payment)
-            .HasForeignKey<Payment>(p => p.OrderId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Payment>()
-            .HasOne(p => p.User)
-            .WithMany(u => u!.Payments)
-            .HasForeignKey(p => p.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         // Seed Data
         var instructorId = Guid.NewGuid();
@@ -66,7 +38,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                 Id = instructorId,
                 UserName = "instructor1",
                 NormalizedUserName = "INSTRUCTOR1",
-                PasswordHash = hasher.HashPassword(null, "aslan1905"),
+                PasswordHash = hasher.HashPassword(null!, "aslan1905"),
                 FirstName = "Fatih",
                 LastName = "Terim"
             },
@@ -75,7 +47,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                 Id = userId,
                 UserName = "user1",
                 NormalizedUserName = "USER1",
-                PasswordHash = hasher.HashPassword(null, "aslan1905"),
+                PasswordHash = hasher.HashPassword(null!, "aslan1905"),
                 FirstName = "Arda",
                 LastName = "Turan"
             }
@@ -88,5 +60,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                 UserId = instructorId
             }
         );
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+    {
+        var entries = ChangeTracker.Entries<IAuditEntity>();
+        var now = DateTime.UtcNow;
+
+        foreach (var entry in entries)
+        {
+            _ = entry.State switch
+            {
+                EntityState.Added  => entry.Entity.CreatedDate = now,
+                EntityState.Modified => entry.Entity.UpdatedDate = now,
+                _ => DateTime.UtcNow
+            };
+        }
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

@@ -19,8 +19,4 @@
 		<ProjectReference Include="..\CourseMarket.Infrastructure\CourseMarket.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Controllers\" />
-	</ItemGroup>
-
 </Project>
