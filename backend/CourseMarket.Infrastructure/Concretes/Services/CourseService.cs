@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using CourseMarket.Application.DTOs;
 using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.Interfaces.Repositories.Course;
 using CourseMarket.Application.Interfaces.Services;
@@ -6,7 +7,9 @@ using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Application.Wrappers;
 using CourseMarket.Domain.Entities;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
 
@@ -16,11 +19,17 @@ public class CourseService(
     IUnitOfWork unitOfWork
     ) : ICourseService
 {
-    public async Task<ServiceResult<List<CourseDto>>> GetAllAsync()
+    public async Task<ServiceResult<PaginatedResult<CourseDto>>> GetAllAsync(Pagination pagination)
     {
-        var courses = await courseReadRepository.GetAll().ToListAsync();
-        var coursesAsDto = courses.Adapt<List<CourseDto>>();
-        return ServiceResult<List<CourseDto>>.SuccessAsOk(coursesAsDto);
+        var totalCount = await courseReadRepository.GetAll().CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pagination.Size);
+        var coursesAsDto = await courseReadRepository.GetAll()
+            .Select(x => x.Adapt<CourseDto>())
+            .Skip((pagination.Page - 1) * pagination.Size)
+        .Take(pagination.Size)
+            .ToListAsync();
+        var paginatedResult = new PaginatedResult<CourseDto>(coursesAsDto, pagination.Page, totalPages);
+        return ServiceResult<PaginatedResult<CourseDto>>.SuccessAsOk(paginatedResult);
     }
 
     public async Task<ServiceResult<CourseDetailDto>> GetByIdAsync(Guid id)

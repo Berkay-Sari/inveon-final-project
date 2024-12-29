@@ -1,4 +1,5 @@
 ﻿
+using CourseMarket.Application.DTOs;
 using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.Interfaces.Services;
 using CourseMarket.Application.Wrappers;
@@ -11,9 +12,9 @@ namespace CourseMarket.API.Controllers;
 public class CoursesController(ICourseService courseService) : CustomBaseController
 {
     [HttpGet]
-    public async Task<IActionResult> Read()
+    public async Task<IActionResult> Read([FromQuery] Pagination pagination)
     {
-        return CreateActionResult(await courseService.GetAllAsync());
+        return CreateActionResult(await courseService.GetAllAsync(pagination));
     }
 
     [HttpGet("{id:guid}")]
