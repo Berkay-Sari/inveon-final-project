@@ -3,6 +3,7 @@ using CourseMarket.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using File = CourseMarket.Domain.Entities.File;
 
 namespace CourseMarket.Infrastructure.Context;
 
@@ -13,6 +14,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Order> Orders { get; set; }
     public DbSet<Payment> Payments { get; set; }
 
+    // Table per Hierarchy (TPH) inheritance 
+    public DbSet<File> Files { get; set; }
+    public DbSet<CourseImageFile> CourseImageFiles { get; set; }
+    public DbSet<InvoiceFile> InvoiceFiles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

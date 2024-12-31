@@ -2,33 +2,52 @@
 using CourseMarket.Application.DTOs;
 using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.Interfaces.Repositories.Course;
+using CourseMarket.Application.Interfaces.Repositories.CourseImageFile;
 using CourseMarket.Application.Interfaces.Services;
+using CourseMarket.Application.Interfaces.Storage;
 using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Application.Wrappers;
 using CourseMarket.Domain.Entities;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
 
 public class CourseService(
     ICourseReadRepository courseReadRepository,
     ICourseWriteRepository courseWriteRepository,
-    IUnitOfWork unitOfWork
+    ICourseImageFileReadRepository courseImageFileReadRepository,
+    IUnitOfWork unitOfWork,
+    IStorageService storageService
     ) : ICourseService
 {
     public async Task<ServiceResult<PaginatedResult<CourseDto>>> GetAllAsync(Pagination pagination)
     {
         var totalCount = await courseReadRepository.GetAll().CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pagination.Size);
+
         var coursesAsDto = await courseReadRepository.GetAll()
-            .Select(x => x.Adapt<CourseDto>())
             .Skip((pagination.Page - 1) * pagination.Size)
-        .Take(pagination.Size)
+            .Take(pagination.Size)
+            .Select(x => x.Adapt<CourseDto>())
             .ToListAsync();
-        var paginatedResult = new PaginatedResult<CourseDto>(coursesAsDto, pagination.Page, totalPages);
+
+        // Fetch all required course images in a single query
+        var courseIds = coursesAsDto.Select(x => x.Id).ToList();
+        var courseImages = await courseImageFileReadRepository.GetAll()
+            .Where(image => courseIds.Contains(image.CourseId))
+            .ToDictionaryAsync(image => image.CourseId, image => image.Path);
+
+        var coursesAsDtoWithImageUrl = coursesAsDto
+            .Select(course =>
+            {
+                var imagePath = courseImages.GetValueOrDefault(course.Id);
+                var imageUrl = imagePath != null ? storageService.GetFile(imagePath) : null;
+                return course with { ImageUrl = imageUrl! };
+            }).ToList();
+
+        var paginatedResult = new PaginatedResult<CourseDto>(coursesAsDtoWithImageUrl, pagination.Page, totalPages);
         return ServiceResult<PaginatedResult<CourseDto>>.SuccessAsOk(paginatedResult);
     }
 
@@ -53,6 +72,7 @@ public class CourseService(
                 $"The Course with name({request.Name}) already exists", HttpStatusCode.BadRequest);
         }
         var newCourse = request.Adapt<Course>();
+        await UploadImageAsync(newCourse, request.Image);
         await courseWriteRepository.AddAsync(newCourse);
         await unitOfWork.SaveChangesAsync();
         return ServiceResult<Guid>.SuccessAsCreated(newCourse.Id, $"/api/courses/{newCourse.Id}");
@@ -60,7 +80,6 @@ public class CourseService(
 
     public async Task<ServiceResult> UpdateAsync(Guid id, UpdateCourseRequest request)
     {
-        //TO-DO: add fluent validation for null field check, price greater than 0, etc.
         var isCourseNameExist = await courseReadRepository.AnyAsync(x => x.Name == request.Name && x.Id != id);
         if (isCourseNameExist)
         {
@@ -88,6 +107,25 @@ public class CourseService(
         }
         courseWriteRepository.Delete(hasCourse);
         await unitOfWork.SaveChangesAsync();
+        return ServiceResult.SuccessAsNoContent();
+    }
+
+    public async Task<ServiceResult> UploadImageAsync(Course course, IFormFile imageFile)
+    {
+        //TODO: Add FluentValidation for image
+        // null, big size, not image, etc.
+
+        var data = await storageService.UploadAsync(
+            "resource/course-images", imageFile);
+
+        course.Image = new CourseImageFile
+        {
+            FileName = data.fileName,
+            Path = data.pathOrContainerName,
+            Storage = storageService.StorageType,
+            CourseId = course.Id
+        };
+
         return ServiceResult.SuccessAsNoContent();
     }
 }

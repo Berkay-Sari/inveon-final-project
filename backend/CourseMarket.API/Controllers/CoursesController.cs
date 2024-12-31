@@ -24,7 +24,7 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCourseRequest request)
+    public async Task<IActionResult> Create([FromForm] CreateCourseRequest request)
     {
         return CreateActionResult(await courseService.CreateAsync(request));
     }

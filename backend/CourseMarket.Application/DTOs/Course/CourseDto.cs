@@ -4,5 +4,6 @@ public record CourseDto(
     Guid Id,
     string Name,
     string? Description,
-    decimal Price
+    decimal Price,
+    string ImageUrl
 );

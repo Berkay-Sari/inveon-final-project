@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CourseMarket.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseMarket.Application.DTOs.Course;
 
@@ -11,5 +8,6 @@ public record CreateCourseRequest(
     string? Description,
     decimal Price,
     string Category,
-    Guid InstructorId
+    Guid InstructorId,
+    IFormFile Image
 );

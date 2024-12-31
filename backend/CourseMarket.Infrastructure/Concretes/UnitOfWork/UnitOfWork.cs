@@ -1,7 +1,7 @@
 ﻿using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Infrastructure.Context;
 
-namespace CourseMarket.Infrastructure.UnitOfWork;
+namespace CourseMarket.Infrastructure.Concretes.UnitOfWork;
 
 public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {

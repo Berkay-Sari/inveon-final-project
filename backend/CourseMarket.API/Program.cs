@@ -1,15 +1,9 @@
-using CourseMarket.Application.Interfaces.Repositories;
-using CourseMarket.Application.Interfaces.Repositories.Course;
-using CourseMarket.Application.Interfaces.Services;
-using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Application.Validators.Courses;
 using CourseMarket.Domain.Entities;
-using CourseMarket.Infrastructure.Concretes.Repositories;
-using CourseMarket.Infrastructure.Concretes.Repositories.Course;
-using CourseMarket.Infrastructure.Concretes.Services;
-using CourseMarket.Infrastructure.Concretes.Services.Filters;
+using CourseMarket.Infrastructure;
+using CourseMarket.Infrastructure.Concretes.Services.Storage.Local;
 using CourseMarket.Infrastructure.Context;
-using CourseMarket.Infrastructure.UnitOfWork;
+using CourseMarket.Infrastructure.Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -29,13 +23,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddScoped(typeof(IReadRepository<,>), typeof(ReadRepository<,>));
-builder.Services.AddScoped(typeof(IWriteRepository<,>), typeof(WriteRepository<,>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddScoped<ICourseReadRepository, CourseReadRepository>();
-builder.Services.AddScoped<ICourseWriteRepository, CourseWriteRepository>();
-builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddInfrastructureServices();
+builder.Services.AddStorage<LocalStorage>();
+// şimdilik sadece local storage destekleniyor. İleride AWS, Azure gibi storage'lar eklenebilir.
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
     {
@@ -55,6 +45,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles(); // wwwroot klasorundeki dosyalara erisim icin
 
 app.UseHttpsRedirection();
 

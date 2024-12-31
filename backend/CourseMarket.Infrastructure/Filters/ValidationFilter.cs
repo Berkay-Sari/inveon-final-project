@@ -4,7 +4,7 @@ using System.Net;
 using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 using CourseMarket.Application.Wrappers;
 
-namespace CourseMarket.Infrastructure.Concretes.Services.Filters;
+namespace CourseMarket.Infrastructure.Filters;
 
 public class ValidationFilter : IAsyncActionFilter
 {
