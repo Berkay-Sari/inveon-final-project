@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using CourseMarket.API.Configurations.ColumnWriters;
+using CourseMarket.API.Extensions;
 using CourseMarket.Application.Validators.Courses;
 using CourseMarket.Domain.Entities;
 using CourseMarket.Infrastructure;
@@ -19,6 +20,7 @@ using Serilog.Core;
 using Serilog;
 using Serilog.Context;
 using Serilog.Sinks.PostgreSQL;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +109,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseStaticFiles(); //wwwroot klasorundeki dosyalara erisim icin
 
