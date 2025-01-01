@@ -32,6 +32,9 @@ public static class ServiceRegistration
         serviceCollection.AddScoped<ICourseImageFileReadRepository, CourseImageFileReadRepository>();
 
         serviceCollection.AddScoped<ICourseService, CourseService>();
+        serviceCollection.AddScoped<IUserService, UserService>();
+        serviceCollection.AddScoped<ITokenService, TokenService>();
+        serviceCollection.AddScoped<IAuthService, AuthService>();
         serviceCollection.AddScoped<IStorageService, StorageService>();
     }
 

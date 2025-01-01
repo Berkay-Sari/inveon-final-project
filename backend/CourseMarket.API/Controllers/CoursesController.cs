@@ -2,7 +2,7 @@
 using CourseMarket.Application.DTOs;
 using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.Interfaces.Services;
-using CourseMarket.Application.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMarket.API.Controllers;
@@ -22,7 +22,7 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
     {
         return CreateActionResult(await courseService.GetByIdAsync(id));
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] CreateCourseRequest request)
     {

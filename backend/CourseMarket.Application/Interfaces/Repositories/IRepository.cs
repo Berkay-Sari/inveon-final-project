@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using CourseMarket.Domain.Common;
+﻿using CourseMarket.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMarket.Application.Interfaces.Repositories;

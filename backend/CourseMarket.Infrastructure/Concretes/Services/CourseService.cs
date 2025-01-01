@@ -75,7 +75,7 @@ public class CourseService(
         await UploadImageAsync(newCourse, request.Image);
         await courseWriteRepository.AddAsync(newCourse);
         await unitOfWork.SaveChangesAsync();
-        return ServiceResult<Guid>.SuccessAsCreated(newCourse.Id, $"/api/courses/{newCourse.Id}");
+        return ServiceResult<Guid>.SuccessAsCreated(newCourse.Id, $"/api/Courses/{newCourse.Id}");
     }
 
     public async Task<ServiceResult> UpdateAsync(Guid id, UpdateCourseRequest request)

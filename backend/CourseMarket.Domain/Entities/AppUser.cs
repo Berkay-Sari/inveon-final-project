@@ -11,6 +11,10 @@ public class AppUser : IdentityUser<Guid>
 
     public bool IsInstructor { get; set; }
 
+    public string? RefreshToken { get; set; }
+    
+    public DateTime? RefreshTokenExpiryTime { get; set; }
+
     public string FullName => $"{FirstName} {LastName}";
 
     // Navigation Properties
