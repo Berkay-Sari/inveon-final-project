@@ -19,8 +19,4 @@ public class AuthController(IAuthService authService): CustomBaseController
     {
         return CreateActionResult(await authService.RefreshTokenLoginAsync(refreshToken));
     }
-    
-
-
-
 }

@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CourseMarket.API.Configurations.ColumnWriters;
@@ -14,13 +15,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.IdentityModel.Tokens;
-using Serilog.Core;
 using Serilog;
 using Serilog.Context;
 using Serilog.Sinks.PostgreSQL;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
+using JwtConstants = Microsoft.IdentityModel.JsonWebTokens.JwtConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +38,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddInfrastructureServices();
 builder.Services.AddStorage<LocalStorage>();
 // şimdilik sadece local storage destekleniyor. İleride AWS, Azure gibi storage'lar eklenebilir.
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
     {
@@ -62,7 +63,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
             ClockSkew = TimeSpan.Zero,
 
-            NameClaimType = ClaimTypes.Name
+            NameClaimType = JwtRegisteredClaimNames.UniqueName
         };
     });
 
@@ -100,6 +101,16 @@ builder.Services.AddHttpLogging(logging =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -133,6 +144,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
+app.UseCors("AllowReactApp");
 
 app.MapControllers();
 

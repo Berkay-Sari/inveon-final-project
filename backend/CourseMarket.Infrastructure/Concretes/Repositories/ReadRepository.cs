@@ -25,7 +25,13 @@ public class ReadRepository<T, TId>(AppDbContext context) : IReadRepository<T, T
         if (!tracking) query = query.AsNoTracking();
         return query;
     }
-
+    public async Task<T?> GetSingleAsync(Expression<Func<T, bool>> method, bool tracking = false)
+    {
+        var query = Table.AsQueryable();
+        if (!tracking)
+            query = Table.AsNoTracking();
+        return await query.FirstOrDefaultAsync(method);
+    }
     public Task<T?> GetByIdAsync(TId id, bool tracking = false)
     {
         var query = Table.AsQueryable();

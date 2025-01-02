@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CourseMarket.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241230205957_mig_2")]
-    partial class mig_2
+    [Migration("20250102035918_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,9 +50,6 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<bool>("IsInstructor")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -81,6 +78,12 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -105,36 +108,82 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8f9b20d5-92f6-4964-aaf9-ec0591d8ce0d"),
+                            Id = new Guid("374fd398-9913-41d4-bb16-6998f36f60be"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d850b760-79b6-4982-913c-291164722ef7",
+                            ConcurrencyStamp = "acd35405-1f7b-454b-a457-aaf8a421e1f1",
                             EmailConfirmed = false,
                             FirstName = "Fatih",
-                            IsInstructor = false,
                             LastName = "Terim",
                             LockoutEnabled = false,
                             NormalizedUserName = "INSTRUCTOR1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKW/7GgJq9SY3QgP91Co8G1MmI5tVYmqoZogVm0ctCRibxBplekvNKiJwMoribcJnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHfpYKfbQAxzt9y9bvlOJGXADHJdUtXTGcUET5UI8nG9go/+PPoOL2IXPnJU83kGeQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "instructor1"
                         },
                         new
                         {
-                            Id = new Guid("4b0080a4-29e2-4ba2-8497-d9f87f546e8f"),
+                            Id = new Guid("a44cacbb-f52e-4699-a9e1-05ba67908e38"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e469a414-15cb-4271-8a55-2f26b68fd0c8",
+                            ConcurrencyStamp = "11d2991f-0f44-4186-93ad-478a674572f3",
                             EmailConfirmed = false,
                             FirstName = "Arda",
-                            IsInstructor = false,
                             LastName = "Turan",
                             LockoutEnabled = false,
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE4epSm2185c7BbUyzfcMQTvRxia1ZoTmg2YL8bnJMRRlsCJ7TpGTKfSTzZMAsvSrQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECF7YGbUh10eGF8JyDdR/e78y2ClaQRUVA0bMkJJVT0jjPBMczUjpigcXBX2IHPqYQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         });
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.Basket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Baskets");
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.BasketItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BasketId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CourseName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasketId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("BasketItems");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Course", b =>
@@ -190,6 +239,18 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("character varying(21)");
 
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Storage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -205,10 +266,13 @@ namespace CourseMarket.Infrastructure.Migrations
             modelBuilder.Entity("CourseMarket.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BuyerId")
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("BasketId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -221,8 +285,6 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
 
                     b.ToTable("Orders");
                 });
@@ -265,21 +327,6 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("CourseOrder", b =>
-                {
-                    b.Property<Guid>("CoursesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OrdersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CoursesId", "OrdersId");
-
-                    b.HasIndex("OrdersId");
-
-                    b.ToTable("CourseOrder");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
@@ -309,7 +356,7 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d99c9ec5-199e-4d22-933c-1035656c534f"),
+                            Id = new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c"),
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         });
@@ -401,8 +448,8 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("8f9b20d5-92f6-4964-aaf9-ec0591d8ce0d"),
-                            RoleId = new Guid("d99c9ec5-199e-4d22-933c-1035656c534f")
+                            UserId = new Guid("374fd398-9913-41d4-bb16-6998f36f60be"),
+                            RoleId = new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c")
                         });
                 });
 
@@ -429,6 +476,12 @@ namespace CourseMarket.Infrastructure.Migrations
                 {
                     b.HasBaseType("CourseMarket.Domain.Entities.File");
 
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
+
                     b.HasDiscriminator().HasValue("CourseImageFile");
                 });
 
@@ -436,7 +489,40 @@ namespace CourseMarket.Infrastructure.Migrations
                 {
                     b.HasBaseType("CourseMarket.Domain.Entities.File");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
                     b.HasDiscriminator().HasValue("InvoiceFile");
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.Basket", b =>
+                {
+                    b.HasOne("CourseMarket.Domain.Entities.AppUser", "User")
+                        .WithMany("Baskets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.BasketItem", b =>
+                {
+                    b.HasOne("CourseMarket.Domain.Entities.Basket", "Basket")
+                        .WithMany("Items")
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CourseMarket.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Basket");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Course", b =>
@@ -452,13 +538,13 @@ namespace CourseMarket.Infrastructure.Migrations
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("CourseMarket.Domain.Entities.AppUser", "Buyer")
-                        .WithMany("Orders")
-                        .HasForeignKey("BuyerId")
+                    b.HasOne("CourseMarket.Domain.Entities.Basket", "Basket")
+                        .WithOne("Order")
+                        .HasForeignKey("CourseMarket.Domain.Entities.Order", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Buyer");
+                    b.Navigation("Basket");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Payment", b =>
@@ -478,21 +564,6 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CourseOrder", b =>
-                {
-                    b.HasOne("CourseMarket.Domain.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CourseMarket.Domain.Entities.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -546,13 +617,36 @@ namespace CourseMarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CourseMarket.Domain.Entities.CourseImageFile", b =>
+                {
+                    b.HasOne("CourseMarket.Domain.Entities.Course", null)
+                        .WithOne("Image")
+                        .HasForeignKey("CourseMarket.Domain.Entities.CourseImageFile", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CourseMarket.Domain.Entities.AppUser", b =>
                 {
+                    b.Navigation("Baskets");
+
                     b.Navigation("GivenCourses");
 
-                    b.Navigation("Orders");
-
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.Basket", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Order")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CourseMarket.Domain.Entities.Course", b =>
+                {
+                    b.Navigation("Image")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Order", b =>

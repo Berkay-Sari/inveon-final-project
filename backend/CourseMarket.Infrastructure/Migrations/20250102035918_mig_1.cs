@@ -35,7 +35,8 @@ namespace CourseMarket.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    IsInstructor = table.Column<bool>(type: "boolean", nullable: false),
+                    RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -163,6 +164,24 @@ namespace CourseMarket.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Baskets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Baskets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Baskets_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
@@ -191,8 +210,9 @@ namespace CourseMarket.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    BuyerId = table.Column<Guid>(type: "uuid", nullable: false),
                     PaymentId = table.Column<int>(type: "integer", nullable: false),
+                    BasketId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -200,33 +220,62 @@ namespace CourseMarket.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_BuyerId",
-                        column: x => x.BuyerId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_Orders_Baskets_Id",
+                        column: x => x.Id,
+                        principalTable: "Baskets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseOrder",
+                name: "BasketItems",
                 columns: table => new
                 {
-                    CoursesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OrdersId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    BasketId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourseName = table.Column<string>(type: "text", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseOrder", x => new { x.CoursesId, x.OrdersId });
+                    table.PrimaryKey("PK_BasketItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseOrder_Courses_CoursesId",
-                        column: x => x.CoursesId,
-                        principalTable: "Courses",
+                        name: "FK_BasketItems_Baskets_BasketId",
+                        column: x => x.BasketId,
+                        principalTable: "Baskets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseOrder_Orders_OrdersId",
-                        column: x => x.OrdersId,
-                        principalTable: "Orders",
+                        name: "FK_BasketItems_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FileName = table.Column<string>(type: "text", nullable: false),
+                    Path = table.Column<string>(type: "text", nullable: false),
+                    Storage = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Files_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -264,21 +313,21 @@ namespace CourseMarket.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { new Guid("775c5887-a96a-4fda-9383-f0d7b4f42ae9"), null, "Instructor", "INSTRUCTOR" });
+                values: new object[] { new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c"), null, "Instructor", "INSTRUCTOR" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsInstructor", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("a4e61557-89be-4619-a0b2-1eb48c376e5c"), 0, "eaee46af-83b5-4286-a544-13ee862098d8", null, false, "Arda", false, "Turan", false, null, null, "USER1", "AQAAAAIAAYagAAAAEDua15tnjRpbKVzg2GQXLvuiwfZXkw1T0yIVtHyP6r6KOnr5NMdU6BLlKA6U6pFOqg==", null, false, null, false, "user1" },
-                    { new Guid("f11e54a8-ec1f-4d97-b668-fc482e771a89"), 0, "72327b88-a63e-42b6-aaa8-93e28be5eee0", null, false, "Fatih", false, "Terim", false, null, null, "INSTRUCTOR1", "AQAAAAIAAYagAAAAELLRQPQf0AGyO0bCd2XqZT2BNB1M0Xl618JtPC9uVZgd1zt51CUP2eAyUi2pfRHt2w==", null, false, null, false, "instructor1" }
+                    { new Guid("374fd398-9913-41d4-bb16-6998f36f60be"), 0, "acd35405-1f7b-454b-a457-aaf8a421e1f1", null, false, "Fatih", "Terim", false, null, null, "INSTRUCTOR1", "AQAAAAIAAYagAAAAEHfpYKfbQAxzt9y9bvlOJGXADHJdUtXTGcUET5UI8nG9go/+PPoOL2IXPnJU83kGeQ==", null, false, null, null, null, false, "instructor1" },
+                    { new Guid("a44cacbb-f52e-4699-a9e1-05ba67908e38"), 0, "11d2991f-0f44-4186-93ad-478a674572f3", null, false, "Arda", "Turan", false, null, null, "USER1", "AQAAAAIAAYagAAAAECF7YGbUh10eGF8JyDdR/e78y2ClaQRUVA0bMkJJVT0jjPBMczUjpigcXBX2IHPqYQ==", null, false, null, null, null, false, "user1" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { new Guid("775c5887-a96a-4fda-9383-f0d7b4f42ae9"), new Guid("f11e54a8-ec1f-4d97-b668-fc482e771a89") });
+                values: new object[] { new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c"), new Guid("374fd398-9913-41d4-bb16-6998f36f60be") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -318,9 +367,19 @@ namespace CourseMarket.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseOrder_OrdersId",
-                table: "CourseOrder",
-                column: "OrdersId");
+                name: "IX_BasketItems_BasketId",
+                table: "BasketItems",
+                column: "BasketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BasketItems_CourseId",
+                table: "BasketItems",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Baskets_UserId",
+                table: "Baskets",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_InstructorId",
@@ -328,9 +387,10 @@ namespace CourseMarket.Infrastructure.Migrations
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_BuyerId",
-                table: "Orders",
-                column: "BuyerId");
+                name: "IX_Files_CourseId",
+                table: "Files",
+                column: "CourseId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_OrderId",
@@ -363,7 +423,10 @@ namespace CourseMarket.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CourseOrder");
+                name: "BasketItems");
+
+            migrationBuilder.DropTable(
+                name: "Files");
 
             migrationBuilder.DropTable(
                 name: "Payments");
@@ -376,6 +439,9 @@ namespace CourseMarket.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Baskets");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

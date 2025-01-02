@@ -12,6 +12,8 @@ public interface IReadRepository<T, in TId> : IRepository<T, TId>
 
     IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate, bool tracking = false);
 
+    Task<T?> GetSingleAsync(Expression<Func<T, bool>> method, bool tracking = false);
+
     Task<T?> GetByIdAsync(TId id, bool tracking = false);
 
     Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);

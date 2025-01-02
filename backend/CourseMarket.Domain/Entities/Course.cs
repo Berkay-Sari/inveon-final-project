@@ -17,8 +17,6 @@ public class Course : BaseEntity<Guid>, IAuditEntity
 
     // Navigation Properties
     public AppUser? Instructor { get; set; }
-    public ICollection<Order>? Orders { get; } = new List<Order>(); // Kursa yapılan siparişler
-
     public CourseImageFile Image { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }

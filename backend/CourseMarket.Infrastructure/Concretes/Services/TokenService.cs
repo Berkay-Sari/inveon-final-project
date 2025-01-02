@@ -1,16 +1,18 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CourseMarket.Application.DTOs.Token;
 using CourseMarket.Application.Interfaces.Services;
 using CourseMarket.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
 
-public class TokenService(IConfiguration configuration) : ITokenService
+public class TokenService(IConfiguration configuration, UserManager<AppUser> userManager) : ITokenService
 {
     public TokenDto CreateAccessToken(AppUser user)
     {
@@ -24,12 +26,21 @@ public class TokenService(IConfiguration configuration) : ITokenService
 
         token.Expiration = DateTime.Now.AddHours(ttlInMinutes);
 
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.UniqueName, user.UserName!)
+        };
+
+        var roles = userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Result.Select(role => new Claim(ClaimTypes.Role, role)));
+
         var jwtSecurityToken = new JwtSecurityToken(
             issuer: configuration["TokenOptions:Issuer"],
             audience: configuration["TokenOptions:Audience"],
             expires: token.Expiration,
             signingCredentials: credentials,
-            claims: new List<Claim> { new(ClaimTypes.Name, user.UserName!) }
+            claims: claims
         );
 
         var handler = new JwtSecurityTokenHandler();

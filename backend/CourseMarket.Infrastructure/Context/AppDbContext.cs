@@ -13,6 +13,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Course> Courses { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BasketItem> BasketItems { get; set; }
 
     // Table per Hierarchy (TPH) inheritance 
     public DbSet<File> Files { get; set; }
@@ -20,7 +22,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<InvoiceFile> InvoiceFiles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Order>()
+            .HasKey(o => o.Id);
+
+        modelBuilder.Entity<Order>().
+            HasIndex(o => o.OrderCode).
+            IsUnique();
+
+
+        modelBuilder.Entity<Basket>()
+            .HasOne(b => b.Order)
+            .WithOne(o => o.Basket)
+            .HasForeignKey<Order>(o => o.Id);
 
         // Seed Data
         var instructorId = Guid.NewGuid();
@@ -65,6 +78,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                 UserId = instructorId
             }
         );
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())

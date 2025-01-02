@@ -9,8 +9,6 @@ public class AppUser : IdentityUser<Guid>
 
     [MaxLength(50)] public required string LastName { get; set; } = default!;
 
-    public bool IsInstructor { get; set; }
-
     public string? RefreshToken { get; set; }
     
     public DateTime? RefreshTokenExpiryTime { get; set; }
@@ -18,7 +16,7 @@ public class AppUser : IdentityUser<Guid>
     public string FullName => $"{FirstName} {LastName}";
 
     // Navigation Properties
-    public ICollection<Course>? GivenCourses { get; } = new List<Course>(); // Eğitmenin verdiği kurslar
-    public ICollection<Order>? Orders { get; } = new List<Order>(); // Kullanıcının verdiği siparişler
+    public ICollection<Course>? GivenCourses { get; } = new List<Course>(); 
     public ICollection<Payment>? Payments { get; } = new List<Payment>();
+    public ICollection<Basket> Baskets { get; set; }
 }
