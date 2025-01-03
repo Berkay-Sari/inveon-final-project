@@ -59,7 +59,17 @@ public class CourseService(
             return ServiceResult<CourseDetailDto>.Error("Course not found",
                 $"The course with id({id}) was not found", HttpStatusCode.NotFound);
         }
-        var courseAsDto = hasCourse.Adapt<CourseDetailDto>();
+
+        var courseImage = await courseImageFileReadRepository.GetByCourseIdAsync(id);
+
+        var courseAsDto = new CourseDetailDto
+        (
+            hasCourse.Name,
+            hasCourse.Description,
+            hasCourse.Price,
+            hasCourse.Category,
+            courseImage!.Path
+        );
         return ServiceResult<CourseDetailDto>.SuccessAsOk(courseAsDto);
     }
 

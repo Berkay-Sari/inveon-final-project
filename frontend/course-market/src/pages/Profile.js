@@ -9,6 +9,7 @@ function Profile() {
     return (
         <div>
             <h1 className="mb-4">Profile</h1>
+            <p><strong>ID:</strong> {user.id}</p>
             <p><strong>Name:</strong> {user.name}</p>
             <p><strong>Role:</strong> {user.role}</p>
         </div>

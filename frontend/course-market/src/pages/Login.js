@@ -10,7 +10,7 @@ import axios from 'axios';
 function Login() {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const { setUser } = useContext(AppContext);
+    const { extractUserDetails } = useContext(AppContext);
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
@@ -25,11 +25,7 @@ function Login() {
 
                     alertify.success('Login successful!');
                     try {
-                        const decodedToken = jwtDecode(accessToken);
-                        const name = decodedToken.unique_name; 
-                        const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']; 
-        
-                        setUser({ name, role });
+                        extractUserDetails(jwtDecode(accessToken));
                     } catch (error) {
                         console.error('Error decoding accessToken:', error);
                         alertify.error('Server error. Please try again.');
