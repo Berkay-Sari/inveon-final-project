@@ -1,10 +1,11 @@
 ﻿using CourseMarket.Application.Interfaces.Storage.Local;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace CourseMarket.Infrastructure.Concretes.Services.Storage.Local;
 
-public class LocalStorage(IWebHostEnvironment webHostEnvironment) : Storage, ILocalStorage
+public class LocalStorage(IWebHostEnvironment webHostEnvironment, ILogger<LocalStorage> logger) : Storage, ILocalStorage
 {
     public async Task<(string fileName, string pathOrContainerName)> UploadAsync(string path, IFormFile file)
     {
@@ -42,9 +43,10 @@ public class LocalStorage(IWebHostEnvironment webHostEnvironment) : Storage, ILo
         return File.Exists(filePath) ? filePath : null;
     }
 
-    public new bool HasFile(string path, string fileName) => File.Exists(Path.Combine(webHostEnvironment.WebRootPath, path, fileName));
+    public new bool HasFile(string path, string fileName) =>
+        File.Exists(Path.Combine(webHostEnvironment.WebRootPath, path, fileName));
 
-    private static async Task<bool> CopyAsync(string path, IFormFile file)
+    private async Task<bool> CopyAsync(string path, IFormFile file)
     {
         try
         {
@@ -61,9 +63,10 @@ public class LocalStorage(IWebHostEnvironment webHostEnvironment) : Storage, ILo
         }
         catch (Exception ex)
         {
-            //TODO: log exception
-            throw ex;
+            logger.LogError(ex,
+                "File copy failed. Could be due to permission issues, disk space problems, or a corrupt file. Path: {Path}, FileName: {FileName}",
+                path, file.FileName);
+            throw;
         }
-
     }
 }

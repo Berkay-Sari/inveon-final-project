@@ -11,5 +11,6 @@ public record CourseDetailDto(
     string? Description,
     decimal Price,
     string Category,
-    string ImageUrl
+    string ImageUrl,
+    string InstructorName
 );

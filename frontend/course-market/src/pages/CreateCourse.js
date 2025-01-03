@@ -16,7 +16,7 @@ const CreateCourse = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState([]);
   const [success, setSuccess] = useState(false);
-  const [newCourseId, setNewCourseId] = useState(null); 
+  const [newCourseId, setNewCourseId] = useState(null);
 
 
   const { user } = useContext(AppContext);
@@ -60,17 +60,17 @@ const CreateCourse = () => {
       console.log("Response:", response.data);
       setSuccess(true);
       setNewCourseId(response.data.data);
+      
     } catch (err) {
       console.error("Error:", err);
       if (err.response && err.response.data && err.response.data.fail) {
-        const validationErrors = err.response.data.fail.errors;
-    const formattedErrors = Object.entries(validationErrors).flatMap(([field, messages]) =>
-      messages.map((msg) => `${field}: ${msg}`)
-    );
-
-    setError(formattedErrors);
+        const fail = err.response.data.fail;
+        const customError = `${fail.title}: ${fail.detail}`;
+        setError([customError]);
+      } else if (err.response && err.response.data && err.response.data.message) {
+        setError([err.response.data.message]);
       } else {
-        setError([err.message]);
+        setError([err.message || "An unknown error occurred."]);
       }
     } finally {
       setLoading(false);
@@ -177,15 +177,15 @@ const CreateCourse = () => {
                 </div>
               )}
               {error.length > 0 && (
-  <div className="alert alert-danger mt-4">
-    <h5 className="alert-heading">Validation Errors</h5>
-    <ul className="mb-0">
-      {error.map((errMsg, index) => (
-        <li key={index}>{errMsg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+                <div className="alert alert-danger mt-4">
+                  <h5 className="alert-heading">Validation Errors</h5>
+                  <ul className="mb-0">
+                    {error.map((errMsg, index) => (
+                      <li key={index}>{errMsg}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

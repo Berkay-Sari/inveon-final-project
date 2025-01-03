@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../context/AppContext"; // Import AppContext
+import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const CourseDetails = () => {
-  const { user } = useContext(AppContext); // Get user information from AppContext
+  const { user } = useContext(AppContext);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
@@ -26,7 +26,7 @@ const CourseDetails = () => {
   const handlePurchase = () => {
     if (!user) {
       alert("You need to log in to purchase this course.");
-      navigate("/login"); // Redirect to login page
+      navigate("/login");
     } else {
       alert("Course successfully purchased!");
       // API call for purchase can be made here
@@ -43,33 +43,38 @@ const CourseDetails = () => {
 
   return (
     <div className="container mt-5">
-      <div className="card">
+      <div className="card shadow">
         <div className="row g-0">
-          <div className="col-md-4">
+          <div className="col-md-5">
             <img
-            //axios get base url
-        
-                src={`${axios.defaults.baseURL}/${course.imageUrl}`}
+              src={`${axios.defaults.baseURL}/${course.imageUrl}`}
               className="img-fluid rounded-start"
               alt={course.name}
             />
           </div>
-          <div className="col-md-8">
-            <div className="card-body">
-              <h5 className="card-title">{course.name}</h5>
-              <p className="card-text">{course.description}</p>
-              <p className="card-text">
-                <strong>Category:</strong> {course.category}
-              </p>
-              <p className="card-text">
-                <strong>Price:</strong> ${course.price}
-              </p>
-              <button
-                className="btn btn-primary"
-                onClick={handlePurchase}
-              >
-                Purchase
-              </button>
+          <div className="col-md-7">
+            <div className="card-body d-flex flex-column">
+              <h1 className="card-title fw-bold">{course.name}</h1>
+              <p className="card-text text-muted">{course.description}</p>
+              <ul className="list-group list-group-flush">
+                <li className="list-group-item">
+                  <strong>Category:</strong> {course.category}
+                </li>
+                <li className="list-group-item">
+                  <strong>Price:</strong> ${course.price}
+                </li>
+                <li className="list-group-item">
+                  <strong>Instructor:</strong> {course.instructorName}
+                </li>
+              </ul>
+              <div className="mt-auto">
+                <button
+                  className="btn btn-primary btn-lg mt-5"
+                  onClick={handlePurchase}
+                >
+                  Purchase Now
+                </button>
+              </div>
             </div>
           </div>
         </div>

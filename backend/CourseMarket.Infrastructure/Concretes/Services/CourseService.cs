@@ -10,6 +10,7 @@ using CourseMarket.Application.Wrappers;
 using CourseMarket.Domain.Entities;
 using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
@@ -18,6 +19,7 @@ public class CourseService(
     ICourseReadRepository courseReadRepository,
     ICourseWriteRepository courseWriteRepository,
     ICourseImageFileReadRepository courseImageFileReadRepository,
+    UserManager<AppUser> userManager,
     IUnitOfWork unitOfWork,
     IStorageService storageService
     ) : ICourseService
@@ -43,8 +45,7 @@ public class CourseService(
             .Select(course =>
             {
                 var imagePath = courseImages.GetValueOrDefault(course.Id);
-                var imageUrl = imagePath != null ? storageService.GetFile(imagePath) : null;
-                return course with { ImageUrl = imageUrl! };
+                return course with { ImageUrl = imagePath! };
             }).ToList();
 
         var paginatedResult = new PaginatedResult<CourseDto>(coursesAsDtoWithImageUrl, pagination.Page, totalPages);
@@ -61,6 +62,8 @@ public class CourseService(
         }
 
         var courseImage = await courseImageFileReadRepository.GetByCourseIdAsync(id);
+        var instructor = await userManager.FindByIdAsync(hasCourse.InstructorId.ToString());
+        var instructorName = instructor?.FullName ?? "Unknown";
 
         var courseAsDto = new CourseDetailDto
         (
@@ -68,7 +71,8 @@ public class CourseService(
             hasCourse.Description,
             hasCourse.Price,
             hasCourse.Category,
-            courseImage!.Path
+            courseImage!.Path,
+            instructorName
         );
         return ServiceResult<CourseDetailDto>.SuccessAsOk(courseAsDto);
     }
@@ -78,7 +82,7 @@ public class CourseService(
         var hasCourse = await courseReadRepository.AnyAsync(x => x.Name == request.Name);
         if (hasCourse)
         {
-            return ServiceResult<Guid>.Error("Course already exists.",
+            return ServiceResult<Guid>.Error("Course already exists",
                 $"The Course with name({request.Name}) already exists", HttpStatusCode.BadRequest);
         }
         var newCourse = request.Adapt<Course>();
@@ -93,7 +97,7 @@ public class CourseService(
         var isCourseNameExist = await courseReadRepository.AnyAsync(x => x.Name == request.Name && x.Id != id);
         if (isCourseNameExist)
         {
-            return ServiceResult.Error("Course already exists.",
+            return ServiceResult.Error("Course already exists",
                 $"The Course with name({request.Name}) already exists", HttpStatusCode.BadRequest);
         }
 
