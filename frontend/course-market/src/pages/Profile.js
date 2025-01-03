@@ -9,21 +9,8 @@ function Profile() {
     return (
         <div>
             <h1 className="mb-4">Profile</h1>
-            <div className="card mb-4">
-                <div className="card-body">
-                    <p><strong>Name:</strong> {user.name}</p>
-                    <p><strong>Email:</strong> {user.email}</p>
-                </div>
-            </div>
-            <h2>Your Courses</h2>
-            <div className="list-group">
-                {user.courses.map((course) => (
-                    <div className="list-group-item" key={course.id}>
-                        <p className="mb-1"><strong>{course.name}</strong></p>
-                        <small>{course.date}</small>
-                    </div>
-                ))}
-            </div>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Role:</strong> {user.role}</p>
         </div>
     );
 }

@@ -1,6 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { jwtDecode } from "jwt-decode";
+import 'alertifyjs/build/css/alertify.css';
+import 'alertifyjs/build/css/themes/default.css';
+import alertify from 'alertifyjs';
 import axios from 'axios';
 
 function Login() {
@@ -19,15 +23,30 @@ function Login() {
                     localStorage.setItem('accessToken', accessToken);
                     localStorage.setItem('refreshToken', refreshToken);
 
-                    console.log('Tokenler başarıyla kaydedildi.');
-
-                    setUser(response.data.user);
+                    alertify.success('Login successful!');
+                    try {
+                        const decodedToken = jwtDecode(accessToken);
+                        const name = decodedToken.unique_name; 
+                        const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']; 
+        
+                        setUser({ name, role });
+                    } catch (error) {
+                        console.error('Error decoding accessToken:', error);
+                        alertify.error('Server error. Please try again.');
+                    }
                     navigate('/');
                 } else {
-                    console.error('Beklenmeyen yanıt formatı:', response);
+                    alertify.error('Server error. Please try again.');
                 }
             })
-            .catch((error) => console.error(error));
+            .catch((error) => {
+                console.error('Error:', error);
+                if (error.response && error.response.status === 400) {
+                    alertify.error(error.response.data.fail.detail);
+                } else {
+                    alertify.error('An unexpected error occurred. Please try again.');
+                }
+            });
     };
 
     return (

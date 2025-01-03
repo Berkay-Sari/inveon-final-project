@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using CourseMarket.API.Configurations.ColumnWriters;
 using CourseMarket.API.Extensions;
@@ -19,13 +18,10 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 using Serilog.Sinks.PostgreSQL;
-using JwtConstants = Microsoft.IdentityModel.JsonWebTokens.JwtConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-// AddFluentValidation() deprecated olmus,
-// asagidaki gibi herhangi bir validator ile assembly'deki tum validatory'leri register ediyoruz.
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCourseValidator>();
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
@@ -49,18 +45,23 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}
+    ).AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateAudience = false,
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
-            ValidIssuer = builder.Configuration["Token:Issuer"],
-            ValidAudience = builder.Configuration["Token:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+            ValidIssuer = builder.Configuration["TokenOptions:Issuer"],
+            ValidAudience = builder.Configuration["TokenOptions:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenOptions:SecurityKey"])),
             ClockSkew = TimeSpan.Zero,
 
             NameClaimType = JwtRegisteredClaimNames.UniqueName
@@ -132,6 +133,7 @@ app.UseHttpLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 // log middleware

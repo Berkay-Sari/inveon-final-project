@@ -20,11 +20,11 @@ public class TokenService(IConfiguration configuration, UserManager<AppUser> use
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenOptions:SecurityKey"]!));
 
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var ttlInMinutes = int.Parse(configuration["TokenOptions:AccessTokenExpiration"]!);
+        var ttlInHours = int.Parse(configuration["TokenOptions:AccessTokenExpiration"]!);
 
-        token.Expiration = DateTime.Now.AddHours(ttlInMinutes);
+        token.Expiration = DateTime.Now.AddHours(ttlInHours);
 
         var claims = new List<Claim>
         {

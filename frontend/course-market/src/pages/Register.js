@@ -13,8 +13,7 @@ function Register() {
 
     const handleRegister = (e) => {
         e.preventDefault();
-        // API call using Axios
-        axios.post('/api/register', { firstName, lastName, userName, email, password, passwordConfirm })
+        axios.post('/api/Users', { firstName, lastName, userName, email, password, passwordConfirm })
             .then(() => {
                 navigate('/login');
             })

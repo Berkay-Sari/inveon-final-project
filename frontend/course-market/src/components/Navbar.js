@@ -1,14 +1,10 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function Navbar() {
-    const { user, setUser } = useContext(AppContext);
-
-    const handleLogout = () => {
-        setUser(null);
-        localStorage.removeItem('jwtToken');
-    };
+    const { user, handleLogout} = useContext(AppContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
@@ -29,6 +25,11 @@ function Navbar() {
                     <ul className="navbar-nav ms-auto">
                         {user ? (
                             <>
+                                {user.role === "Instructor" && (
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/create-course">Create Course</Link>
+                                    </li>
+                                )}
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>

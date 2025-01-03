@@ -1,4 +1,4 @@
-function Contact() {
+const Contact = () => {
     return (
         <div className="container my-5">
             <div className="row">
