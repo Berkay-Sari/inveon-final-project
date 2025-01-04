@@ -12,4 +12,6 @@ public interface ICourseService
     Task<ServiceResult<Guid>> CreateAsync(CreateCourseRequest request);
     Task<ServiceResult> UpdateAsync(Guid id, UpdateCourseRequest request);
     Task<ServiceResult> DeleteAsync(Guid id);
+
+    Task<ServiceResult<PaginatedResult<CourseDto>>> GetByNameAsync(string name, Pagination pagination);
 }

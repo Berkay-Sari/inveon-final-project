@@ -1,92 +1,68 @@
 ﻿using System.Net;
 using CourseMarket.Application.DTOs.Basket;
-using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.Interfaces.Repositories.Basket;
-using CourseMarket.Application.Interfaces.Repositories.BasketItem;
-using CourseMarket.Application.Interfaces.Repositories.Order;
+using CourseMarket.Application.Interfaces.Repositories.Course;
+using CourseMarket.Application.Interfaces.Repositories.CourseImageFile;
 using CourseMarket.Application.Interfaces.Services;
 using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Application.Wrappers;
 using CourseMarket.Domain.Entities;
-using CourseMarket.Infrastructure.Concretes.Repositories.BasketItem;
+using CourseMarket.Infrastructure.Context;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
 
 public class BasketService(
     IHttpContextAccessor httpContextAccessor,
-    UserManager<AppUser> userManager,
-    IOrderReadRepository orderReadRepository,
-    IBasketItemWriteRepository basketItemWriteRepository,
-    IBasketItemReadRepository basketItemReadRepository,
     IBasketReadRepository basketReadRepository,
+    IBasketWriteRepository basketWriteRepository,
+    ICourseReadRepository courseReadRepository,
+    ICourseImageFileReadRepository courseImageFileReadRepository,
     IUnitOfWork unitOfWork
     ) : IBasketService
 {
     public async Task<ServiceResult<List<BasketItemDto>>> GetBasketItemsAsync()
     {
-        var basket = await ContextUser();
-        var result = await basketReadRepository.Table
-            .Include(b => b.Items)
-            .ThenInclude(bi => bi.Course)
-            .FirstOrDefaultAsync(b => b.Id == basket!.Id);
+        var userId = UserContext.GetUserId(httpContextAccessor);
+        var basketCourseIdList = await basketReadRepository.GetCourseIdsByUserIdAsync(userId);
 
-        if (result is null)
+        if (basketCourseIdList.Count == 0)
         {
-            return ServiceResult<List<BasketItemDto>>.Error(new ProblemDetails
-            {
-                Title = "Basket not found",
-                Detail = "Basket not found",
-                Status = (int)HttpStatusCode.NotFound
-            }, HttpStatusCode.NotFound);
+            return ServiceResult<List<BasketItemDto>>.SuccessAsOk([]);
         }
 
-        var basketItems = result.Items.Select(bi => new BasketItemDto(
-            CourseName: bi.Course.Name,
-            ImageUrl: bi.Course.Image.Path,
-            Price: bi.Course.Price,
-            CourseId: bi.CourseId,
-            BasketItemId: bi.Id
-        ));
+        var courses = await courseReadRepository.GetRange(basketCourseIdList);
 
-        return ServiceResult<List<BasketItemDto>>.SuccessAsOk(basketItems.ToList());
+        var courseImages = await courseImageFileReadRepository.GetAll()
+            .Where(image => basketCourseIdList.Contains(image.CourseId))
+            .ToDictionaryAsync(image => image.CourseId, image => image.Path);
+
+        var basketItems = courses.Select(course => new BasketItemDto(
+            course.Id,
+            course.Name,
+            course.Price,
+            courseImages.GetValueOrDefault(course.Id, string.Empty)
+        )).ToList();
+
+        return ServiceResult<List<BasketItemDto>>.SuccessAsOk(basketItems);
     }
 
-    public async Task<ServiceResult> AddItemToBasketAsync(Guid courseId)
+    public async Task<ServiceResult> AddCourseAsync(Guid courseId)
     {
-        var basket = await ContextUser();
-        if (basket == null)
+        var userId = UserContext.GetUserId(httpContextAccessor);
+
+        var exists = await basketReadRepository.ExistsAsync(userId, courseId);
+
+        if (exists)
         {
-            return ServiceResult<BasketItemDto>.Error(new ProblemDetails
-            {
-                Title = "Basket not found",
-                Detail = "Basket not found",
-                Status = (int)HttpStatusCode.NotFound
-            }, HttpStatusCode.NotFound);
+            return ServiceResult.Error("Course already exists in the basket",
+                $"The course with id({courseId}) already exists in the basket", HttpStatusCode.BadRequest);
         }
-        
-        var basketId = basket.Id;
-        var basketItem = await basketItemReadRepository.GetSingleAsync(
-            bi => bi.BasketId == basketId && bi.CourseId == courseId, 
-            true);
-        if (basketItem != null)
-        {
-            return ServiceResult.Error(new ProblemDetails
-            {
-                Title = "Item already exist",
-                Detail = "Course already exists in basket",
-                Status = (int)HttpStatusCode.BadRequest
-            }, HttpStatusCode.BadRequest);
-        }
-        
-        await basketItemWriteRepository.AddAsync(new BasketItem
-        {
-            BasketId = basketId,
-            CourseId = courseId
-        });
+
+        var basket = new Basket(userId, courseId);
+
+        await basketWriteRepository.AddAsync(basket);
 
         await unitOfWork.SaveChangesAsync();
 
@@ -94,59 +70,21 @@ public class BasketService(
 
     }
 
-    public async Task<ServiceResult> RemoveItemFromBasketAsync(Guid basketItemId)
+    public async Task<ServiceResult> RemoveCourseAsync(Guid courseId)
     {
-        var basketItem = await basketItemReadRepository.GetByIdAsync(basketItemId, true);
-        if (basketItem == null)
+        var userId = UserContext.GetUserId(httpContextAccessor);
+
+        var basketItem = await basketReadRepository.GetBasketItem(userId, courseId);
+
+        if (basketItem is null)
         {
-            return ServiceResult.ErrorAsNotFound();
+            return ServiceResult.Error("Course not found in the basket",
+                $"The course with id({courseId}) was not found in the basket", HttpStatusCode.NotFound);
         }
-        basketItemWriteRepository.Delete(basketItem);
+
+        basketWriteRepository.Delete(basketItem);
+
         await unitOfWork.SaveChangesAsync();
         return ServiceResult.SuccessAsNoContent();
-    }
-
-    private async Task<Basket?> ContextUser()
-    {
-        var username = httpContextAccessor?.HttpContext?.User?.Identity?.Name;
-        if (string.IsNullOrEmpty(username))
-        {
-            throw new Exception("User not found");
-        }
-
-        var user = await userManager.Users
-            .Include(u => u.Baskets)
-            .FirstOrDefaultAsync(u => u.UserName == username);
-
-        var _basket = (from basket in user!.Baskets 
-            join order in orderReadRepository.Table 
-                on basket.Id equals order.Id into BasketOrders 
-            from order in BasketOrders.DefaultIfEmpty() 
-            select new 
-            { 
-                Basket = basket, 
-                Order = order
-            }).ToList();
-
-        Basket? targetBasket;
-        if (_basket.Any(b => b.Order is null))
-            targetBasket = _basket.FirstOrDefault(b => b.Order is null)?.Basket;
-        else
-        {
-            targetBasket = new Basket();
-            user.Baskets.Add(targetBasket);
-        }
-
-        await unitOfWork.SaveChangesAsync();
-        return targetBasket;
-    }
-
-    public Basket? GetUserActiveBasket
-    {
-        get
-        {
-            var basket = ContextUser().Result;
-            return basket;
-        }
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CourseMarket.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250102044052_mig_2")]
-    partial class mig_2
+    [Migration("20250103222807_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,30 +108,30 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("de8a0c63-ec6b-4577-a5a8-3d6fca4ed6a0"),
+                            Id = new Guid("cb6b00d0-e5af-4c2b-9326-370d28154847"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a11e1604-a3f3-41e0-a38c-d1ea566ff82d",
+                            ConcurrencyStamp = "a291bd67-1369-45d4-8a91-3196577aeaf8",
                             EmailConfirmed = false,
                             FirstName = "Fatih",
                             LastName = "Terim",
                             LockoutEnabled = false,
                             NormalizedUserName = "INSTRUCTOR1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEONN1oMWoxcI0BnUluNUOSQUwC0lWACJvnbHooXJam88O+FyGgiUSfbNgmKBRB3JjA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEESKJyLD7h21HrCyZV7fW4v5rz/RNwkcMZC+hkoURAOTOWOpxZ9B4jWrS/ADRn++gw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "instructor1"
                         },
                         new
                         {
-                            Id = new Guid("555a144c-8d4b-41f9-9f9a-49f3ea72ba1a"),
+                            Id = new Guid("a5ff819a-7b63-4b30-8b3e-d91b870d5e3a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1f9019ba-bef4-43f6-861c-dd07399159e2",
+                            ConcurrencyStamp = "6daf3bc3-19d7-416f-b09c-3361b07accf1",
                             EmailConfirmed = false,
                             FirstName = "Arda",
                             LastName = "Turan",
                             LockoutEnabled = false,
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKPA/kUGHphhemzPB/2t3/+JoX97JJYf+pwSGh0k9JtD85p89gg/HYdNSTlXD1FbYw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENvlQ4iCakTHeByhauH1El71fV0UPbPZ92lk7aYfH04syQPHZ1wweZ3l5vOfi83iKw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "user1"
@@ -167,10 +167,6 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CourseName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -275,6 +271,10 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("OrderCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("PaymentId")
                         .HasColumnType("integer");
 
@@ -282,6 +282,9 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderCode")
+                        .IsUnique();
 
                     b.ToTable("Orders");
                 });
@@ -353,7 +356,7 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("762d67de-a737-483c-94b7-9bc5f1e586ea"),
+                            Id = new Guid("1042ce38-4246-4720-a7a0-fed83d6502c1"),
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         });
@@ -445,8 +448,8 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("de8a0c63-ec6b-4577-a5a8-3d6fca4ed6a0"),
-                            RoleId = new Guid("762d67de-a737-483c-94b7-9bc5f1e586ea")
+                            UserId = new Guid("cb6b00d0-e5af-4c2b-9326-370d28154847"),
+                            RoleId = new Guid("1042ce38-4246-4720-a7a0-fed83d6502c1")
                         });
                 });
 

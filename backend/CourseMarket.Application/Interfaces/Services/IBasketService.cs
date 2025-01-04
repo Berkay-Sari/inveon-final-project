@@ -7,7 +7,6 @@ namespace CourseMarket.Application.Interfaces.Services;
 public interface IBasketService
 {
     Task<ServiceResult<List<BasketItemDto>>> GetBasketItemsAsync();
-    Task<ServiceResult> AddItemToBasketAsync(Guid basketItemId);
-    Task<ServiceResult> RemoveItemFromBasketAsync(Guid basketItemId);
-    Basket? GetUserActiveBasket { get; }
+    Task<ServiceResult> AddCourseAsync(Guid courseId);
+    Task<ServiceResult> RemoveCourseAsync(Guid courseId);
 }

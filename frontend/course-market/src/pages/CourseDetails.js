@@ -2,47 +2,77 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import alertify from "alertifyjs";
 
 const CourseDetails = () => {
   const { user } = useContext(AppContext);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userCourses, setUserCourses] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`api/courses/${id}`)
-      .then((response) => {
-        setCourse(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching course details:", error);
-        setLoading(false);
-      });
-  }, [id]);
+    const fetchCourseDetails = async () => {
+      setLoading(true);
+      try {
+        const courseResponse = await axios.get(`/api/courses/${id}`);
+        setCourse(courseResponse.data.data);
 
-  const handlePurchase = () => {
+        if (user) {
+          const userCoursesResponse = await axios.get(`/api/users/courses`);
+          setUserCourses(userCoursesResponse.data.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching course details or user courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseDetails();
+  }, [id, user]);
+
+  const handlePurchase = async () => {
     if (!user) {
       alert("You need to log in to purchase this course.");
-      navigate("/login");
-    } else {
-      alert("Course successfully purchased!");
-      // API call for purchase can be made here
+      navigate(`/login?redirect=/course/${id}`);
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/api/Baskets/${id}`);
+      if (response.status === 204) {
+        alertify.success("Course successfully added to your basket!");
+      } else {
+        alertify.error("Failed to add the course to the basket. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding course to basket:", error);
+      if (error.response && error.response.status === 400) {
+        alertify.error(error.response.data.fail.title);
+      } else {
+        alertify.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   if (loading) {
-    return <div className="text-center mt-5">Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!course) {
     return <div className="text-center mt-5">Course not found.</div>;
   }
 
+  const isOwned = userCourses.includes(id);
+
   return (
     <div className="container mt-5">
+      <button className="btn btn-secondary mb-3" onClick={() => navigate("/")}>
+        Go Back To Courses
+      </button>
       <div className="card shadow">
         <div className="row g-0">
           <div className="col-md-5">
@@ -68,12 +98,18 @@ const CourseDetails = () => {
                 </li>
               </ul>
               <div className="mt-auto">
-                <button
-                  className="btn btn-primary btn-lg mt-5"
-                  onClick={handlePurchase}
-                >
-                  Purchase Now
-                </button>
+                {isOwned ? (
+                  <div className="alert alert-success mt-5" role="alert">
+                    You have this course. Start learning!
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-primary btn-lg mt-5"
+                    onClick={handlePurchase}
+                  >
+                    Purchase Now
+                  </button>
+                )}
               </div>
             </div>
           </div>

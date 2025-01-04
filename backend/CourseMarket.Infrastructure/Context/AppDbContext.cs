@@ -11,10 +11,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Course> Courses { get; set; }
+
+    public DbSet<Basket> Baskets { get; set; }
+
     public DbSet<Order> Orders { get; set; }
     public DbSet<Payment> Payments { get; set; }
-    public DbSet<Basket> Baskets { get; set; }
-    public DbSet<BasketItem> BasketItems { get; set; }
 
     // Table per Hierarchy (TPH) inheritance 
     public DbSet<File> Files { get; set; }
@@ -22,22 +23,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<InvoiceFile> InvoiceFiles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Order>()
-            .HasKey(o => o.Id);
-
-        modelBuilder.Entity<Order>().
-            HasIndex(o => o.OrderCode).
-            IsUnique();
-
-
-        modelBuilder.Entity<Basket>()
-            .HasOne(b => b.Order)
-            .WithOne(o => o.Basket)
-            .HasForeignKey<Order>(o => o.Id);
-
         // Seed Data
         var instructorId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
         var instructorRoleId = Guid.NewGuid();
         modelBuilder.Entity<IdentityRole<Guid>>().HasData(
             new IdentityRole<Guid>
@@ -59,15 +46,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                 PasswordHash = hasher.HashPassword(null!, "aslan1905"),
                 FirstName = "Fatih",
                 LastName = "Terim"
-            },
-            new AppUser
-            {
-                Id = userId,
-                UserName = "user1",
-                NormalizedUserName = "USER1",
-                PasswordHash = hasher.HashPassword(null!, "aslan1905"),
-                FirstName = "Arda",
-                LastName = "Turan"
             }
         );
 

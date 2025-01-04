@@ -14,10 +14,10 @@ public class Course : BaseEntity<Guid>, IAuditEntity
     [MaxLength(50)] public required string Category { get; set; }
 
     public Guid InstructorId { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
     // Navigation Properties
     public AppUser? Instructor { get; set; }
     public CourseImageFile Image { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? UpdatedDate { get; set; }
 }

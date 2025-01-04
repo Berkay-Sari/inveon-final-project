@@ -1,34 +1,89 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../context/AppContext';
-import axios from 'axios';
-import CourseCard from '../components/CourseCard';
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import CourseCard from "../components/CourseCard";
+import Search from "../components/Search";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function HomePage() {
     const { courses, setCourses } = useContext(AppContext);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [isSearchActive, setIsSearchActive] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        const fetchCourses = async (page) => {
+        const fetchCourses = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get(`/api/Courses?Page=${page}&Size=6`);
+                let response;
+                if (isSearchActive) {
+                    response = await axios.get(
+                        `/api/Courses/filter?name=${searchTerm}&Page=${currentPage}&Size=6`
+                    );
+                } else {
+                    response = await axios.get(`/api/Courses?Page=${currentPage}&Size=6`);
+                }
                 setCourses(response.data.data.items);
                 setTotalPages(response.data.data.totalPages);
             } catch (error) {
-                console.error('Failed to fetch courses:', error);
+                console.error("Failed to fetch courses:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchCourses(currentPage);
-    }, [currentPage, setCourses]);
+        fetchCourses();
+    }, [currentPage, isSearchActive, searchTerm, setCourses]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
+    const resetSearch = () => {
+        setSearchTerm("");
+        setIsSearchActive(false);
+        setCurrentPage(1);
+    };
+
+    const getHeaderTitle = () => {
+        return isSearchActive && searchTerm
+            ? `COURSES(${searchTerm})`
+            : "COURSES";
+    };
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     return (
         <div className="container mt-5">
-            <h3 className="mb-4 d-flex justify-content-center">COURSES</h3>
+            <div className="d-flex justify-content-between align-items-center">
+                <h3>{getHeaderTitle()}</h3>
+                <div className="d-flex">
+                    <Search
+                        setCourses={(data) => {
+                            setCourses(data);
+                            setIsSearchActive(true);
+                        }}
+                        setTotalPages={setTotalPages}
+                        setCurrentPage={(page) => {
+                            setCurrentPage(page);
+                            setIsSearchActive(true);
+                        }}
+                        setSearchTerm={setSearchTerm}
+                    />
+                    {isSearchActive && (
+                        <button
+                            onClick={resetSearch}
+                            className="btn btn-link ms-3"
+                        >
+                            Reset Search
+                        </button>
+                    )}
+                </div>
+            </div>
             <div className="row">
                 {courses.length > 0 ? (
                     courses.map((course) => (
@@ -46,11 +101,9 @@ function HomePage() {
                     <p>No courses available at the moment.</p>
                 )}
             </div>
-
-            {/* Pagination */}
             <nav>
                 <ul className="pagination justify-content-center">
-                    <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
+                    <li className={`page-item ${currentPage === 1 && "disabled"}`}>
                         <button
                             className="page-link"
                             onClick={() => handlePageChange(currentPage - 1)}
@@ -62,17 +115,14 @@ function HomePage() {
                     {Array.from({ length: totalPages }, (_, index) => (
                         <li
                             key={index + 1}
-                            className={`page-item ${currentPage === index + 1 && 'active'}`}
+                            className={`page-item ${currentPage === index + 1 && "active"}`}
                         >
-                            <button
-                                className="page-link"
-                                onClick={() => handlePageChange(index + 1)}
-                            >
+                            <button className="page-link" onClick={() => handlePageChange(index + 1)}>
                                 {index + 1}
                             </button>
                         </li>
                     ))}
-                    <li className={`page-item ${currentPage === totalPages && 'disabled'}`}>
+                    <li className={`page-item ${currentPage === totalPages && "disabled"}`}>
                         <button
                             className="page-link"
                             onClick={() => handlePageChange(currentPage + 1)}

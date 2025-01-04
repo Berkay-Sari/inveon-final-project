@@ -14,16 +14,19 @@ public class BasketsController(IBasketService basketService) : CustomBaseControl
     {
         return CreateActionResult(await basketService.GetBasketItemsAsync());
     }
-    
     [HttpPost("{courseId:guid}")]
-    public async Task<IActionResult> AddItem(Guid courseId)
+    public async Task<IActionResult> AddCourse(Guid courseId)
     {
-        return CreateActionResult(await basketService.AddItemToBasketAsync(courseId));
+        return CreateActionResult(await basketService.AddCourseAsync(courseId));
     }
-
     [HttpDelete("{courseId:guid}")]
-    public async Task<IActionResult> RemoveItem(Guid courseId)
+    public async Task<IActionResult> RemoveCourse(Guid courseId)
     {
-        return CreateActionResult(await basketService.RemoveItemFromBasketAsync(courseId));
+        return CreateActionResult(await basketService.RemoveCourseAsync(courseId));
     }
 }
+
+
+
+
+

@@ -11,4 +11,6 @@ public interface IUserService
 
     Task<ServiceResult> UpdateRefreshTokenAsync(string refreshToken, AppUser user);
 
+    Task<ServiceResult<List<Guid>>> GetCoursesAsync();
+
 }

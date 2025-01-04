@@ -4,7 +4,7 @@ import { AppContext } from '../context/AppContext';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function Navbar() {
-    const { user, handleLogout} = useContext(AppContext);
+    const { user, handleLogout } = useContext(AppContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
@@ -27,28 +27,41 @@ function Navbar() {
                             <>
                                 {user.role === "Instructor" && (
                                     <li className="nav-item">
-                                        <Link className="nav-link" to="/create-course">Create Course</Link>
+                                        <Link className="nav-link" to="/create-course">
+                                            <i className="bi bi-pencil-square"></i> Create Course
+                                        </Link>
                                     </li>
                                 )}
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/profile">Profile</Link>
+                                    <Link className="nav-link" to="/basket">
+                                        <i className="bi bi-cart-fill"></i> Basket
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/profile">
+                                        <i className="bi bi-person-circle"></i> Profile
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
                                     <button
                                         className="btn btn-outline-danger ms-2"
                                         onClick={handleLogout}
                                     >
-                                        Logout
+                                        <i className="bi bi-box-arrow-right"></i> Logout
                                     </button>
                                 </li>
                             </>
                         ) : (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/login">Login</Link>
+                                    <Link className="nav-link" to="/login">
+                                        <i className="bi bi-box-arrow-in-right"></i> Login
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/register">Register</Link>
+                                    <Link className="nav-link" to="/register">
+                                        <i className="bi bi-person-plus"></i> Register
+                                    </Link>
                                 </li>
                             </>
                         )}

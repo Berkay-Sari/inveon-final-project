@@ -11,22 +11,10 @@ namespace CourseMarket.API.Controllers;
 [Authorize]
 public class OrdersController(IOrderService orderService) : CustomBaseController
 {
-    [HttpGet("order/{id:guid}")]
-    public async Task<IActionResult> Read(Guid id)
-    {
-        return CreateActionResult(await orderService.GetOrderByIdAsync(id));
-    }
-
-    [HttpGet("user/{userId:guid}")]
-    public async Task<IActionResult> ReadByUser(Guid userId)
-    {
-        return CreateActionResult(await orderService.GetOrdersByUserIdAsync(userId));
-    }
-
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateOrderDto createOrderDto)
+    public async Task<IActionResult> Upsert([FromQuery] decimal totalAmount)
     {
-        return CreateActionResult(await orderService.CreateOrderAsync(createOrderDto));
+        return CreateActionResult(await orderService.UpsertOrderAsync(totalAmount));
     }
 }
 

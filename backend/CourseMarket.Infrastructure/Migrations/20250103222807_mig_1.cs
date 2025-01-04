@@ -211,8 +211,8 @@ namespace CourseMarket.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PaymentId = table.Column<int>(type: "integer", nullable: false),
-                    BasketId = table.Column<Guid>(type: "uuid", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
+                    OrderCode = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -235,7 +235,6 @@ namespace CourseMarket.Infrastructure.Migrations
                     BasketId = table.Column<Guid>(type: "uuid", nullable: false),
                     CourseId = table.Column<Guid>(type: "uuid", nullable: false),
                     CourseName = table.Column<string>(type: "text", nullable: false),
-                    ImageUrl = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
@@ -313,21 +312,21 @@ namespace CourseMarket.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c"), null, "Instructor", "INSTRUCTOR" });
+                values: new object[] { new Guid("1042ce38-4246-4720-a7a0-fed83d6502c1"), null, "Instructor", "INSTRUCTOR" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("374fd398-9913-41d4-bb16-6998f36f60be"), 0, "acd35405-1f7b-454b-a457-aaf8a421e1f1", null, false, "Fatih", "Terim", false, null, null, "INSTRUCTOR1", "AQAAAAIAAYagAAAAEHfpYKfbQAxzt9y9bvlOJGXADHJdUtXTGcUET5UI8nG9go/+PPoOL2IXPnJU83kGeQ==", null, false, null, null, null, false, "instructor1" },
-                    { new Guid("a44cacbb-f52e-4699-a9e1-05ba67908e38"), 0, "11d2991f-0f44-4186-93ad-478a674572f3", null, false, "Arda", "Turan", false, null, null, "USER1", "AQAAAAIAAYagAAAAECF7YGbUh10eGF8JyDdR/e78y2ClaQRUVA0bMkJJVT0jjPBMczUjpigcXBX2IHPqYQ==", null, false, null, null, null, false, "user1" }
+                    { new Guid("a5ff819a-7b63-4b30-8b3e-d91b870d5e3a"), 0, "6daf3bc3-19d7-416f-b09c-3361b07accf1", null, false, "Arda", "Turan", false, null, null, "USER1", "AQAAAAIAAYagAAAAENvlQ4iCakTHeByhauH1El71fV0UPbPZ92lk7aYfH04syQPHZ1wweZ3l5vOfi83iKw==", null, false, null, null, null, false, "user1" },
+                    { new Guid("cb6b00d0-e5af-4c2b-9326-370d28154847"), 0, "a291bd67-1369-45d4-8a91-3196577aeaf8", null, false, "Fatih", "Terim", false, null, null, "INSTRUCTOR1", "AQAAAAIAAYagAAAAEESKJyLD7h21HrCyZV7fW4v5rz/RNwkcMZC+hkoURAOTOWOpxZ9B4jWrS/ADRn++gw==", null, false, null, null, null, false, "instructor1" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { new Guid("9b81c9be-8597-40c1-8500-2034d43fbd2c"), new Guid("374fd398-9913-41d4-bb16-6998f36f60be") });
+                values: new object[] { new Guid("1042ce38-4246-4720-a7a0-fed83d6502c1"), new Guid("cb6b00d0-e5af-4c2b-9326-370d28154847") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -390,6 +389,12 @@ namespace CourseMarket.Infrastructure.Migrations
                 name: "IX_Files_CourseId",
                 table: "Files",
                 column: "CourseId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderCode",
+                table: "Orders",
+                column: "OrderCode",
                 unique: true);
 
             migrationBuilder.CreateIndex(

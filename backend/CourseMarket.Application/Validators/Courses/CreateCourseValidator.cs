@@ -28,5 +28,13 @@ public class CreateCourseValidator : AbstractValidator<CreateCourseRequest>
         RuleFor(x => x.InstructorId)
             .NotEmpty()
             .NotNull().WithMessage("Please provide an instructor for the course.");
+
+        RuleFor(x => x.Image)
+            .NotEmpty()
+            .NotNull().WithMessage("Please provide an image for the course.")
+            .Must(x => x.FileName.EndsWith(".jpg") || x.FileName.EndsWith(".jpeg") || x.FileName.EndsWith(".png"))
+            .WithMessage("The image must be in .jpg, .jpeg, or .png format.")
+            .Must(x => x.Length < 2 * 1024 * 1024)
+            .WithMessage("The image size must be less than 2MB.");
     }
 }

@@ -4,9 +4,20 @@ namespace CourseMarket.Domain.Entities;
 
 public class Basket : BaseEntity<Guid>
 {
-    public Guid UserId { get; set; }
-    public AppUser User { get; set; }
-    public Order Order { get; set; }
-    public List<BasketItem> Items { get; set; } = [];
-    public decimal TotalPrice => Items.Sum(x => x.Price);
+    private Basket()
+    {
+    }
+
+    public Basket(Guid userId, Guid courseId)
+    {
+        UserId = userId;
+        CourseId = courseId;
+    }
+
+    public Guid UserId { get; private set; }
+    public Guid CourseId { get; private set; }
+
+    // Navigation Properties
+    public AppUser? User { get; set; }
+    public Course? Course { get; set; }
 }

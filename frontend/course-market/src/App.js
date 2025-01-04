@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import CourseDetails from './pages/CourseDetails';
 import CreateCourse from './pages/CreateCourse';
+import Basket from './pages/Basket';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -14,6 +15,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import AccessDenied from './pages/AccessDenied';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import './App.css';
 
 function App() {
     return (
@@ -30,6 +33,14 @@ function App() {
                                 element={
                                     <ProtectedRoute role="Instructor">
                                         <CreateCourse />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/basket"
+                                element={
+                                    <ProtectedRoute role="">
+                                        <Basket />
                                     </ProtectedRoute>
                                 }
                             />

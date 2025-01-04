@@ -29,7 +29,7 @@ export const AppProvider = ({ children }) => {
     // Axios interceptor to add JWT token to headers
     axios.interceptors.request.use(
         (config) => {
-            const token = localStorage.getItem('jwtToken');
+            const token = localStorage.getItem('accessToken');
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`;
             }

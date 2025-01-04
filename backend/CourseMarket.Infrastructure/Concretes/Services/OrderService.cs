@@ -1,88 +1,63 @@
 ﻿using System.Net;
 using CourseMarket.Application.DTOs.Basket;
 using CourseMarket.Application.DTOs.Order;
+using CourseMarket.Application.Interfaces.Repositories.Basket;
 using CourseMarket.Application.Interfaces.Repositories.Order;
+using CourseMarket.Application.Interfaces.Repositories.Payment;
 using CourseMarket.Application.Interfaces.Services;
 using CourseMarket.Application.Interfaces.UnitOfWork;
 using CourseMarket.Application.Wrappers;
 using CourseMarket.Domain.Entities;
+using CourseMarket.Infrastructure.Context;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMarket.Infrastructure.Concretes.Services;
 
 public class OrderService(
+    IHttpContextAccessor httpContextAccessor,
     IOrderReadRepository orderReadRepository,
     IOrderWriteRepository orderWriteRepository,
-    IBasketService basketService,
+    IBasketReadRepository basketReadRepository,
+    IPaymentWriteRepository paymentWriteRepository,
+    IPaymentReadRepository paymentReadRepository,
     IUnitOfWork unitOfWork
     ) : IOrderService
 {
-    public async Task<ServiceResult> CreateOrderAsync(CreateOrderDto createOrderDto)
+    public async Task<ServiceResult> UpsertOrderAsync(decimal totalAmount)
     {
-        var orderCode = (new Random().NextDouble() * 10000).ToString();
-        orderCode = orderCode.Substring(orderCode.IndexOf(".") + 1, orderCode.Length - orderCode.IndexOf(".") - 1);
-        var order = new Order
-        {
-            Address = createOrderDto.Address,
-            Id = basketService.GetUserActiveBasket.Id,
-            OrderCode = orderCode
-        };
+        var userId = UserContext.GetUserId(httpContextAccessor);
+        var basketItems = await basketReadRepository.GetCourseIdsByUserIdAsync(userId);
+        var order = await orderReadRepository.GetUncompletedOrderByUserIdAsync(userId);
 
-        var result = await orderWriteRepository.AddAsync(order);
-        if (result == false)
+        if (order == null)
         {
-            ServiceResult.Error("Order creation failed", HttpStatusCode.BadRequest);
+            order = new Order(userId, basketItems, totalAmount);
+            await orderWriteRepository.AddAsync(order);
+            await unitOfWork.SaveChangesAsync();
+            var payment = new Payment(userId, order.Id, totalAmount);
+            await paymentWriteRepository.AddAsync(payment);
         }
+        else
+        {
+            order.UpdateCourseIds(basketItems);
+            order.TotalAmount = totalAmount;
+            var payment = await paymentReadRepository.GetPaymentByOrderIdAsync(order.Id);
+            payment!.Amount = totalAmount;
+            orderWriteRepository.Update(order);
+        }
+
         await unitOfWork.SaveChangesAsync();
+
         return ServiceResult.SuccessAsNoContent();
     }
 
-    public async Task<ServiceResult<OrderDto>> GetOrderByIdAsync(Guid id)
+    public string CompleteOrder(Order order)
     {
-
-        var data = orderReadRepository.Table
-            .Include(o => o.Basket)
-            .ThenInclude(b => b.Items);
-
-        var order = await data.FirstOrDefaultAsync(o => o.Id == id);
-
-        if (order is null)
-        {
-            return ServiceResult<OrderDto>.Error("Order not found",
-                $"The order with id({id}) was not found", HttpStatusCode.NotFound);
-        }
-
-        var orderDto = new OrderDto
-        (
-            order.Id,
-            order.Address,
-            order.Basket.Items.Select(item => new BasketItemDto(
-               item.CourseName, item.ImageUrl, item.Price, item.CourseId, item.Id)
-            ).ToList(),
-            order.OrderCode,
-            order.CreatedDate
-        );
-
-        return ServiceResult<OrderDto>.SuccessAsOk(orderDto);
-    }
-
-    public async Task<ServiceResult<List<OrderDto>>> GetOrdersByUserIdAsync(Guid userId)
-    {
-        var data = orderReadRepository.Table
-            .Include(o => o.Basket)
-            .ThenInclude(b => b.Items);
-        var orders = await data.Where(o => o.Basket.UserId == userId).ToListAsync();
-        var orderDtos = orders.Select(order => new OrderDto
-        (
-            order.Id,
-            order.Address,
-            order.Basket.Items.Select(item => new BasketItemDto(
-               item.CourseName, item.ImageUrl, item.Price, item.CourseId, item.Id)
-            ).ToList(),
-            order.OrderCode,
-            order.CreatedDate
-        )).ToList();
-
-        return ServiceResult<List<OrderDto>>.SuccessAsOk(orderDtos);
+        var orderCode = (new Random().NextDouble() * 10000).ToString();
+        orderCode = orderCode.Substring(orderCode.IndexOf(".") + 1, orderCode.Length - orderCode.IndexOf(".") - 1);
+        order.CompleteOrder(orderCode);
+        orderWriteRepository.Update(order);
+        return orderCode;
     }
 }

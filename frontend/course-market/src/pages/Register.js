@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import alertify from 'alertifyjs';
 
 function Register() {
     const [firstName, setFirstName] = useState('');
@@ -9,15 +10,48 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!firstName.trim()) newErrors.firstName = "First Name is required";
+        if (!lastName.trim()) newErrors.lastName = "Last Name is required";
+        if (!userName.trim()) newErrors.userName = "Username is required";
+        if (!email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            newErrors.email = "Invalid email format";
+        }
+        if (!password) {
+            newErrors.password = "Password is required";
+        } else if (password.length < 8) {
+            newErrors.password = "Password must be at least 8 characters long";
+        }
+        if (password !== passwordConfirm) {
+            newErrors.passwordConfirm = "Passwords do not match";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleRegister = (e) => {
         e.preventDefault();
-        axios.post('/api/Users', { firstName, lastName, userName, email, password, passwordConfirm })
-            .then(() => {
-                navigate('/login');
-            })
-            .catch((error) => console.error(error));
+        if (validateForm()) {
+            axios.post('/api/Users', { firstName, lastName, userName, email, password })
+                .then(() => {
+                    alertify.success('Account created successfully! Please login.');
+                    navigate('/login');
+                })
+                .catch((error) => {
+                    console.error(error);
+                    if (error.response && error.response.status === 400) {
+                        alertify.error(error.response.data.fail.detail);
+                    } else {
+                        alertify.error('An unexpected error occurred. Please try again.');
+                    }
+                });
+        }
     };
 
     return (
@@ -34,6 +68,7 @@ function Register() {
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                         />
+                        {errors.firstName && <small className="text-danger">{errors.firstName}</small>}
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Last Name</label>
@@ -44,6 +79,7 @@ function Register() {
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                         />
+                        {errors.lastName && <small className="text-danger">{errors.lastName}</small>}
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Username</label>
@@ -54,6 +90,7 @@ function Register() {
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
                         />
+                        {errors.userName && <small className="text-danger">{errors.userName}</small>}
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Email</label>
@@ -64,6 +101,7 @@ function Register() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
+                        {errors.email && <small className="text-danger">{errors.email}</small>}
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Password</label>
@@ -74,6 +112,7 @@ function Register() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        {errors.password && <small className="text-danger">{errors.password}</small>}
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Confirm Password</label>
@@ -84,6 +123,7 @@ function Register() {
                             value={passwordConfirm}
                             onChange={(e) => setPasswordConfirm(e.target.value)}
                         />
+                        {errors.passwordConfirm && <small className="text-danger">{errors.passwordConfirm}</small>}
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Register</button>
                 </form>

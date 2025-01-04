@@ -41,6 +41,13 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
     {
         return CreateActionResult(await courseService.DeleteAsync(id));
     }
+
+    [HttpGet("filter")]
+    public async Task<IActionResult> FilterByName([FromQuery] string name, [FromQuery] Pagination pagination)
+    {
+        return CreateActionResult(await courseService.GetByNameAsync(name, pagination));
+    }
+
 }
 
 

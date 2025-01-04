@@ -3,6 +3,7 @@ using CourseMarket.Domain.Common;
 
 namespace CourseMarket.Domain.Entities;
 
+//rich domain model
 public class Payment : BaseEntity<Guid>, IAuditEntity
 {
     private Payment()
@@ -16,16 +17,16 @@ public class Payment : BaseEntity<Guid>, IAuditEntity
 
     public Guid UserId { get; private set; }
     public Guid OrderId { get; private set; }
-    public decimal Amount { get; private set; }
+    public decimal Amount { get; set; }
     public PaymentStatus Status { get; private set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
 
-    [MaxLength(500)] public string? Error { get; private set; }
+    [MaxLength(500)] public string? Error { get; set; }
 
     // Navigation Properties
     public AppUser? User { get; set; }
-    public Order? Order { get; set; }
+    //public Order? Order { get; set; }
 
     public void CreateNew(Guid userId, Guid orderId, decimal amount)
     {

@@ -1,5 +1,6 @@
 ﻿using CourseMarket.Application.DTOs.User;
 using CourseMarket.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMarket.API.Controllers;
@@ -12,6 +13,13 @@ public class UsersController(IUserService userService) : CustomBaseController
     public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
     {
         return CreateActionResult(await userService.CreateAsync(request));
+    }
+
+    [HttpGet("courses")]
+    [Authorize]
+    public async Task<IActionResult> GetCourses()
+    {
+        return CreateActionResult(await userService.GetCoursesAsync());
     }
 
 }

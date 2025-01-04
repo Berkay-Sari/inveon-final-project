@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { jwtDecode } from "jwt-decode";
 import 'alertifyjs/build/css/alertify.css';
@@ -12,6 +12,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const { extractUserDetails } = useContext(AppContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -30,7 +31,8 @@ function Login() {
                         console.error('Error decoding accessToken:', error);
                         alertify.error('Server error. Please try again.');
                     }
-                    navigate('/');
+                    const redirectUrl = new URLSearchParams(location.search).get("redirect");
+                    navigate(redirectUrl || "/"); 
                 } else {
                     alertify.error('Server error. Please try again.');
                 }
