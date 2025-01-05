@@ -96,5 +96,6 @@ API dökümantasyonu bir **Postman Collection** olarak sağlanmıştır. Aşağ�
 ---
 | **Veritabanı İlişkileri** |
 |--------------------|
-| ![image](https://github.com/user-attachments/assets/3d0b956b-6428-4151-b69a-fae1d4b3c881)| 
+| ![image](https://github.com/user-attachments/assets/f4b33085-f262-4691-9113-07f105ca617b)
+| 
 
