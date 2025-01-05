@@ -4,7 +4,7 @@ Onion Architecture yaklaşımı ile kurgulanmış bir Kurs Satış Platformu.
 
 ## 🚀 Başlarken
 
-Projenizi çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
+Projeyi çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
 
 1. **Visual Studio**'yu açın.
 2. **"Clone a repository"** seçeneği üzerinden projeyi klonlayın.
@@ -12,6 +12,7 @@ Projenizi çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
 4. **NuGet Package Manager Console**'u açın:
    - Menüden **Tools (Araçlar) > NuGet Package Manager > Package Manager Console** yolunu izleyin.
    - Default project olarak `CourseMarket.Infrastructure` seçin ve ardından `Update-Database` komutunu çalıştırarak veritabanını oluşturun.
+   - Visual Studio üzerinde backendi ayağa kaldırın (https run)
 5. **Seed Data**:
    - **pgAdmin**'i açın ve `CourseMarketAPIDb` veritabanına sağ tıklayarak **Query Tool**'u seçin.
    - Query Tool penceresinde dosya simgesine tıklayın, **seed-data** klasörü altındaki `seed.sql` dosyasını seçin ve çalıştırın. Veriler veritabanına yüklenecektir.
