@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using CourseMarket.Application.DTOs.Basket;
+using CourseMarket.Application.DTOs.Course;
 using CourseMarket.Application.DTOs.Order;
 using CourseMarket.Application.Interfaces.Repositories.Basket;
+using CourseMarket.Application.Interfaces.Repositories.Course;
 using CourseMarket.Application.Interfaces.Repositories.Order;
 using CourseMarket.Application.Interfaces.Repositories.Payment;
 using CourseMarket.Application.Interfaces.Services;
@@ -21,6 +23,7 @@ public class OrderService(
     IBasketReadRepository basketReadRepository,
     IPaymentWriteRepository paymentWriteRepository,
     IPaymentReadRepository paymentReadRepository,
+    ICourseReadRepository courseReadRepository,
     IUnitOfWork unitOfWork
     ) : IOrderService
 {
@@ -60,4 +63,36 @@ public class OrderService(
         orderWriteRepository.Update(order);
         return orderCode;
     }
+
+    public async Task<ServiceResult<List<OrderHistoryDto>>> GetOrderHistoryAsync()
+    {
+        var userId = UserContext.GetUserId(httpContextAccessor);
+
+        var orders = await orderReadRepository.GetCompletedOrdersByUserIdAsync(userId);
+
+        var orderHistory = new List<OrderHistoryDto>();
+
+        foreach (var order in orders)
+        {
+            var courseIds = order.GetCourseIds();
+
+            var courses = await courseReadRepository.GetRange(courseIds);
+
+            var courseDtos = courses.Select(course =>
+                new OrderCourseDto(
+                    course.Name,
+                    course.Price
+                )).ToList();
+
+            orderHistory.Add(new OrderHistoryDto(
+                order.OrderCode!,
+                order.CreatedDate,
+                courseDtos
+            ));
+        }
+
+        return ServiceResult<List<OrderHistoryDto>>.SuccessAsOk(orderHistory);
+    }
+
+
 }

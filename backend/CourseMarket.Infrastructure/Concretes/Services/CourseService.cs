@@ -48,6 +48,7 @@ public class CourseService(
 
         var courseAsDto = new CourseDetailDto
         (
+            hasCourse.Id,
             hasCourse.Name,
             hasCourse.Description,
             hasCourse.Price,

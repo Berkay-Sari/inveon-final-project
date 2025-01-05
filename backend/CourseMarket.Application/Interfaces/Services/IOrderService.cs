@@ -8,4 +8,5 @@ public interface IOrderService
 {
     Task<ServiceResult> UpsertOrderAsync(decimal totalAmount);
     string CompleteOrder(Order order);
+    Task<ServiceResult<List<OrderHistoryDto>>> GetOrderHistoryAsync();
 }

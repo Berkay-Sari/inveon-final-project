@@ -35,7 +35,7 @@ public class Order : BaseEntity<Guid>, IAuditEntity
 
     public List<Guid> GetCourseIds()
     {
-        return JsonSerializer.Deserialize<List<Guid>>(CourseIds) ?? new List<Guid>();
+        return JsonSerializer.Deserialize<List<Guid>>(CourseIds) ?? [];
     }
 
     public void CreateNew(Guid userId, List<Guid> courseIds, decimal totalAmount)

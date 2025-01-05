@@ -16,5 +16,11 @@ public class OrdersController(IOrderService orderService) : CustomBaseController
     {
         return CreateActionResult(await orderService.UpsertOrderAsync(totalAmount));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetOrderHistory()
+    {
+        return CreateActionResult(await orderService.GetOrderHistoryAsync());
+    }
 }
 

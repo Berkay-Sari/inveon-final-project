@@ -22,4 +22,11 @@ public class UsersController(IUserService userService) : CustomBaseController
         return CreateActionResult(await userService.GetCoursesAsync());
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Profile()
+    {
+        return CreateActionResult(await userService.GetProfileInfo());
+    }
+
 }

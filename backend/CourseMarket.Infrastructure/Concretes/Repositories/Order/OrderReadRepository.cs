@@ -12,4 +12,10 @@ public class OrderReadRepository(AppDbContext context)
         return Table
             .Where(order => order.UserId == userId && order.IsCompleted == false).FirstOrDefaultAsync();
     }
+
+    public Task<List<Domain.Entities.Order>> GetCompletedOrdersByUserIdAsync(Guid userId)
+    {
+        return Table
+            .Where(order => order.UserId == userId && order.IsCompleted == true).ToListAsync();
+    }
 }

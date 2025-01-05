@@ -75,4 +75,12 @@ public class UserService(
         var courseIdList = user!.GetOwnedCourseIds();
         return ServiceResult<List<Guid>>.SuccessAsOk(courseIdList);
     }
+
+    public async Task<ServiceResult<UserProfileResponse>> GetProfileInfo()
+    {
+        var userId = UserContext.GetUserId(httpContextAccessor);
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        var userProfile = user.Adapt<UserProfileResponse>();
+        return ServiceResult<UserProfileResponse>.SuccessAsOk(userProfile);
+    }
 }
