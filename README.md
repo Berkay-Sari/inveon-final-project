@@ -28,6 +28,7 @@ Onion Architecture yaklaşımı ile kurgulanmış Kurs Satış sitesi
 - [React.js](https://react.dev/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Entity Framework Core](https://docs.microsoft.com/ef/core/)
+
 - [Identity](https://docs.microsoft.com/aspnet/core/security/authentication/identity)
 - [Mapster](https://github.com/MapsterMapper/Mapster)
 - [Bootstrap](https://getbootstrap.com/)
@@ -36,3 +37,15 @@ Onion Architecture yaklaşımı ile kurgulanmış Kurs Satış sitesi
 ```
 API Dökümantasyonu Postman Collection olarak sağlanmıştır. Postman'i açıp sol üst kısımdan import dedikten sonra repodaki collection'ı sürükleyip içeri bırakabilirsiniz.
 ```
+![Architecture](https://github.com/user-attachments/assets/b98f5807-c87a-4dda-8d26-f41110c9166a)
+
+![CourseDetail(not-owned)](https://github.com/user-attachments/assets/5e6189e0-41f5-4283-9d0d-78d840ebf859)
+![CourseDetail(owned)](https://github.com/user-attachments/assets/1087262c-97d1-4aad-887a-a63ac33a5ffe)
+![Profil](https://github.com/user-attachments/assets/3558b6ae-7156-4da9-91e8-0d1f70893cee)
+![Homepage](https://github.com/user-attachments/assets/898cf078-4429-4c4a-8547-8acf10cdf02b)
+![Orderhistory](https://github.com/user-attachments/assets/6e9548aa-b371-4e06-add8-0a8d888109ec)
+![Login(with-alertify)](https://github.com/user-attachments/assets/ff91f579-41db-43b9-8a90-895d6312735f)
+![Register](https://github.com/user-attachments/assets/ca786691-5be1-4fd3-b8dd-63c423838fd4)
+![CreateCourse](https://github.com/user-attachments/assets/92b984ee-d025-4757-a03b-ae5a74da6c76)
+![Basket-Payment](https://github.com/user-attachments/assets/7eac73bb-4d8c-4702-9377-ad43c54329aa)
+![FileManagment](https://github.com/user-attachments/assets/43fe2445-dcf6-4a0e-be51-468a67fbe43c)
