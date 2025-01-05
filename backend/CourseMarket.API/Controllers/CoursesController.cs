@@ -31,12 +31,14 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Instructor")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCourseRequest request)
     {
         return CreateActionResult(await courseService.UpdateAsync(id, request));
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Instructor")]
     public async Task<IActionResult> Delete(Guid id)
     {
         return CreateActionResult(await courseService.DeleteAsync(id));
