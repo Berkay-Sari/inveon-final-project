@@ -125,6 +125,14 @@ public class CourseService(
         return ServiceResult<PaginatedResult<CourseDto>>.SuccessAsOk(paginatedResult);
     }
 
+    public async Task<ServiceResult<PaginatedResult<CourseDto>>> GetByCategoryAsync(string category, Pagination pagination)
+    {
+        var query = courseReadRepository.GetAll()
+            .Where(x => EF.Functions.Like(x.Category.ToLower(), $"%{category.ToLower()}%"));
+        var paginatedResult = await GetPaginatedCoursesAsync(query, pagination);
+        return ServiceResult<PaginatedResult<CourseDto>>.SuccessAsOk(paginatedResult);
+    }
+
     private async Task<PaginatedResult<CourseDto>> GetPaginatedCoursesAsync(IQueryable<Course> query, Pagination pagination)
     {
         var totalCount = await query.CountAsync();

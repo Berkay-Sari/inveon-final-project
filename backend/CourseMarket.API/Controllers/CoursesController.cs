@@ -42,11 +42,21 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
         return CreateActionResult(await courseService.DeleteAsync(id));
     }
 
-    [HttpGet("filter")]
+    [HttpGet("filter-by-name")]
     public async Task<IActionResult> FilterByName([FromQuery] string name, [FromQuery] Pagination pagination)
     {
         return CreateActionResult(await courseService.GetByNameAsync(name, pagination));
     }
+
+    [HttpGet("filter-by-category")]
+    public async Task<IActionResult> FilterByCategory([FromQuery] string category, [FromQuery] Pagination pagination)
+    {
+        return CreateActionResult(await courseService.GetByCategoryAsync(category, pagination));
+    }
+
+
+
+
 
 }
 

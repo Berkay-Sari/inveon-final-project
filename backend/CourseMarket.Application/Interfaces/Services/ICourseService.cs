@@ -14,4 +14,6 @@ public interface ICourseService
     Task<ServiceResult> DeleteAsync(Guid id);
 
     Task<ServiceResult<PaginatedResult<CourseDto>>> GetByNameAsync(string name, Pagination pagination);
+
+    Task<ServiceResult<PaginatedResult<CourseDto>>> GetByCategoryAsync(string category, Pagination pagination);
 }

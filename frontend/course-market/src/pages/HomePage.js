@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import CourseCard from "../components/CourseCard";
-import Search from "../components/Search";
+import SearchByName from "../components/SearchByName";
+import SearchByCategory from "../components/SearchByCategory";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function HomePage() {
@@ -12,6 +13,7 @@ function HomePage() {
     const [loading, setLoading] = useState(true);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [categoryTerm, setCategoryTerm] = useState("");
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -19,9 +21,15 @@ function HomePage() {
             try {
                 let response;
                 if (isSearchActive) {
-                    response = await axios.get(
-                        `/api/Courses/filter?name=${searchTerm}&Page=${currentPage}&Size=6`
-                    );
+                    if (categoryTerm) {
+                        response = await axios.get(
+                            `/api/Courses/filter-by-category?category=${categoryTerm}&Page=${currentPage}&Size=6`
+                        );
+                    } else {
+                        response = await axios.get(
+                            `/api/Courses/filter-by-name?name=${searchTerm}&Page=${currentPage}&Size=6`
+                        );
+                    }
                 } else {
                     response = await axios.get(`/api/Courses?Page=${currentPage}&Size=6`);
                 }
@@ -35,7 +43,7 @@ function HomePage() {
         };
 
         fetchCourses();
-    }, [currentPage, isSearchActive, searchTerm, setCourses]);
+    }, [currentPage, isSearchActive, searchTerm, categoryTerm, setCourses]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -43,14 +51,17 @@ function HomePage() {
 
     const resetSearch = () => {
         setSearchTerm("");
+        setCategoryTerm("");
         setIsSearchActive(false);
         setCurrentPage(1);
     };
 
     const getHeaderTitle = () => {
-        return isSearchActive && searchTerm
-            ? `COURSES(${searchTerm})`
-            : "COURSES";
+        if (isSearchActive) {
+            if (categoryTerm) return `COURSES (${categoryTerm})`;
+            if (searchTerm) return `COURSES (${searchTerm})`;
+        }
+        return "COURSES";
     };
 
     if (loading) {
@@ -62,7 +73,19 @@ function HomePage() {
             <div className="d-flex justify-content-between align-items-center">
                 <h3>{getHeaderTitle()}</h3>
                 <div className="d-flex">
-                    <Search
+                    <SearchByCategory
+                        setCourses={(data) => {
+                            setCourses(data);
+                            setIsSearchActive(true);
+                        }}
+                        setTotalPages={setTotalPages}
+                        setCurrentPage={(page) => {
+                            setCurrentPage(page);
+                            setIsSearchActive(true);
+                        }}
+                        setCategoryTerm={setCategoryTerm}
+                    />
+                    <SearchByName
                         setCourses={(data) => {
                             setCourses(data);
                             setIsSearchActive(true);

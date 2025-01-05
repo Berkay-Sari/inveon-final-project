@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function ProfileCourse({ course, id }) {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ function ProfileCourse({ course, id }) {
             <div className="row g-0">
                 <div className="col-md-4">
                     <img
-                        src={course.imageUrl}
+                        src={`${axios.defaults.baseURL}/${course.imageUrl}`}
                         alt={course.name}
                         className="img-fluid rounded-start"
                     />
