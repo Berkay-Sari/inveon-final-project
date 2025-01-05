@@ -36,7 +36,7 @@ const CourseDetails = () => {
 
   const handlePurchase = async () => {
     if (!user) {
-      alert("You need to log in to purchase this course.");
+      alertify.error("You need to log in to purchase this course.");
       navigate(`/login?redirect=/course/${id}`);
       return;
     }
