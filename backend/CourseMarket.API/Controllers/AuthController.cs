@@ -6,16 +6,16 @@ namespace CourseMarket.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IAuthService authService): CustomBaseController
+public class AuthController(IAuthService authService) : CustomBaseController
 {
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest loginRequest)
     {
         return CreateActionResult(await authService.LoginAsync(loginRequest));
     }
 
-    [HttpGet]
-    public async Task<IActionResult> RefreshTokenLogin([FromForm] string refreshToken)
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshTokenLogin([FromBody] string refreshToken)
     {
         return CreateActionResult(await authService.RefreshTokenLoginAsync(refreshToken));
     }

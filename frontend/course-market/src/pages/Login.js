@@ -16,7 +16,7 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        axios.post('/api/Auth', { userName, password })
+        axios.post('/api/Auth/login', { userName, password })
             .then((response) => {
                 if (response.status === 201 && response.data?.data) {
                     const { accessToken, refreshToken } = response.data.data;

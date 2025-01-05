@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../context/AppContext";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CourseCard from "../components/CourseCard";
 import SearchByName from "../components/SearchByName";
@@ -7,7 +6,7 @@ import SearchByCategory from "../components/SearchByCategory";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function HomePage() {
-    const { courses, setCourses } = useContext(AppContext);
+    const [courses, setCourses] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);

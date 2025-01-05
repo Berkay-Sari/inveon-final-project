@@ -60,7 +60,6 @@ public class AuthService(
             }, HttpStatusCode.BadRequest);
         }
 
-
         var token = tokenService.CreateAccessToken(user);
         await userService.UpdateRefreshTokenAsync(token.RefreshToken, user);
 

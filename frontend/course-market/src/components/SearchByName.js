@@ -6,7 +6,7 @@ function SearchByName({ setCourses, setTotalPages, setCurrentPage, setSearchTerm
 
   const handleSearch = async () => {
     try {
-      setSearchTerm(localSearchTerm); // Update search term in HomePage
+      setSearchTerm(localSearchTerm);
       const response = await axios.get(
         `/api/Courses/filter-by-name?name=${localSearchTerm}&Page=1&Size=6`
       );

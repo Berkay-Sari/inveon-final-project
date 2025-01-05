@@ -53,11 +53,6 @@ public class CoursesController(ICourseService courseService) : CustomBaseControl
     {
         return CreateActionResult(await courseService.GetByCategoryAsync(category, pagination));
     }
-
-
-
-
-
 }
 
 
