@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import ProfileCourse from '../components/ProfileCourse';
+import LoadingSpinner from '../components/LoadingSpinner'; // LoadingSpinner bileşenini ekliyoruz
 import axios from 'axios';
 
 function Profile() {
@@ -9,13 +10,18 @@ function Profile() {
     const [profileData, setProfileData] = useState(null); // Kullanıcı bilgileri
     const [courses, setCourses] = useState([]); // Kullanıcının kursları
     const [purchaseHistory, setPurchaseHistory] = useState([]); // Satın alma geçmişi
+    const [loading, setLoading] = useState(true); // Yükleme durumu
     const [formData, setFormData] = useState({
         email: '',
         phoneNumber: '',
-        password: '',
+    });
+    const [formErrors, setFormErrors] = useState({
+        email: '',
+        phoneNumber: '',
     });
 
     const fetchUserData = async () => {
+        setLoading(true); // Yükleme başlat
         try {
             const response = await axios.get('/api/users');
             const userData = response.data.data;
@@ -23,26 +29,24 @@ function Profile() {
             setFormData({
                 email: userData.email || '',
                 phoneNumber: userData.phoneNumber || '',
-                password: '',
             });
 
-            // purchasedCourses ile kurs bilgilerini çek
             if (userData.purchasedCourses) {
                 const courseIds = JSON.parse(userData.purchasedCourses);
                 const courseRequests = courseIds.map((id) =>
                     axios.get(`/api/courses/${id}`)
                 );
                 const courseResponses = await Promise.all(courseRequests);
-                const fetchedCourses = courseResponses.map((res) => res.data.data); // Response içindeki course verisi
+                const fetchedCourses = courseResponses.map((res) => res.data.data);
                 setCourses(fetchedCourses);
             }
 
-            // Purchase history çek
             const purchaseResponse = await axios.get('/api/orders');
-            console.log(purchaseResponse.data.data);
             setPurchaseHistory(purchaseResponse.data.data);
         } catch (error) {
             console.error('Error fetching user data or courses:', error);
+        } finally {
+            setLoading(false); // Yükleme durumu sonlandır
         }
     };
 
@@ -58,6 +62,35 @@ function Profile() {
             ...prevData,
             [name]: value,
         }));
+        setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: '', // Hata mesajını sıfırla
+        }));
+    };
+
+    const validateForm = () => {
+        let valid = true;
+        const errors = {};
+
+        // Email Validation
+        if (!formData.email) {
+            errors.email = "Email can't be empty.";
+            valid = false;
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            errors.email = 'Email is not valid.';
+            valid = false;
+        }
+
+        // Phone Number Validation
+        if (formData.phoneNumber) {
+            if (!/^(\+?[0-9]{10,15})$/.test(formData.phoneNumber)) {
+                errors.phoneNumber = 'Phone number is not valid.';
+                valid = false;
+            }
+        }
+
+        setFormErrors(errors);
+        return valid;
     };
 
     const handleEditToggle = () => {
@@ -65,9 +98,13 @@ function Profile() {
     };
 
     const handleSave = async () => {
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             const updatedData = { email: formData.email, phoneNumber: formData.phoneNumber };
-            await axios.put(`/api/users/${user?.id}`, updatedData);
+            const res = await axios.put('/api/users', updatedData);
             setEditMode(false);
             setProfileData((prev) => ({
                 ...prev,
@@ -78,7 +115,9 @@ function Profile() {
         }
     };
 
-    if (!user) return <p className="alert alert-warning text-center">Please log in to view your profile.</p>;
+    if (!user) return <p className="alert alert-warning text-center mt-5">Please log in to view your profile.</p>;
+
+    if (loading) return <LoadingSpinner />; // Yüklenirken spinner göster
 
     return (
         <div className="container mt-5">
@@ -109,6 +148,7 @@ function Profile() {
                                     onClick={handleEditToggle}
                                 ></i>
                             </div>
+                            {formErrors.email && <div className="text-danger">{formErrors.email}</div>}
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Phone Number</label>
@@ -127,17 +167,7 @@ function Profile() {
                                     onClick={handleEditToggle}
                                 ></i>
                             </div>
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Change Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Enter new password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="form-control"
-                            />
+                            {formErrors.phoneNumber && <div className="text-danger">{formErrors.phoneNumber}</div>}
                         </div>
                         {editMode && (
                             <div className="text-center">

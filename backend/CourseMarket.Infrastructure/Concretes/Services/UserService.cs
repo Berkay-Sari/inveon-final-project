@@ -18,7 +18,7 @@ public class UserService(
     IConfiguration configuration,
     IHttpContextAccessor httpContextAccessor,
     ILogger<UserService> logger
-    ) : IUserService
+) : IUserService
 {
     public async Task<ServiceResult<IdentityResult>> CreateAsync(CreateUserRequest userDto)
     {
@@ -82,5 +82,30 @@ public class UserService(
         var user = await userManager.FindByIdAsync(userId.ToString());
         var userProfile = user.Adapt<UserProfileResponse>();
         return ServiceResult<UserProfileResponse>.SuccessAsOk(userProfile);
+    }
+
+    public async Task<ServiceResult> UpdateProfileInfo(UpdateUserProfileRequest request)
+    {
+        var userId = UserContext.GetUserId(httpContextAccessor);
+        var user = await userManager.FindByIdAsync(userId.ToString());
+
+        user!.Email = request.Email;
+        user.PhoneNumber = request.PhoneNumber;
+
+        var result = await userManager.UpdateAsync(user);
+        if (result.Succeeded)
+        {
+            return ServiceResult.SuccessAsNoContent();
+        }
+
+        var errorDetailsForUpdate = new ProblemDetails
+        {
+            Title = "User update failed",
+            Detail = string.Join(", ", result.Errors.Select(e => e.Description)),
+            Status = (int)HttpStatusCode.BadRequest
+        };
+        logger.LogError("User update failed: {Errors}, User: {UserName}", errorDetailsForUpdate.Detail, user.UserName);
+
+        return ServiceResult.Error(errorDetailsForUpdate, HttpStatusCode.BadRequest);
     }
 }

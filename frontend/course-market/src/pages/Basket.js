@@ -66,13 +66,8 @@ const Basket = () => {
             {showSuccessMessage && (
                 <div className="alert alert-success text-center" role="alert">
                 Your order was successful! Your order code is:{" "}
-                <Link
-                    to={`/Orders/${orderCode}`}
-                    className="text-decoration-none fw-bold"
-                    style={{ color: "inherit" }}
-                >
-                    {orderCode}
-                </Link>
+                <span className="fw-bold">{orderCode}</span>
+
                 . Happy learning!
                 <div className="mt-3">
                     <Link to="/" className="btn btn-primary">

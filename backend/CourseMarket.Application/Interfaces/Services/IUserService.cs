@@ -14,4 +14,6 @@ public interface IUserService
     Task<ServiceResult<List<Guid>>> GetCoursesAsync();
 
     Task<ServiceResult<UserProfileResponse>> GetProfileInfo();
+
+    Task<ServiceResult> UpdateProfileInfo(UpdateUserProfileRequest request);
 }

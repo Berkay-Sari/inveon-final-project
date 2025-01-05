@@ -29,4 +29,11 @@ public class UsersController(IUserService userService) : CustomBaseController
         return CreateActionResult(await userService.GetProfileInfo());
     }
 
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileRequest request)
+    {
+        return CreateActionResult(await userService.UpdateProfileInfo(request));
+    }
+
 }
