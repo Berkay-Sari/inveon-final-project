@@ -94,3 +94,7 @@ API dökümantasyonu bir **Postman Collection** olarak sağlanmıştır. Aşağ�
 | ![FileManagment](https://github.com/user-attachments/assets/43fe2445-dcf6-4a0e-be51-468a67fbe43c) |
 
 ---
+| **Veritabanı İlişkileri** |
+|--------------------|
+| ![image](https://github.com/user-attachments/assets/3d0b956b-6428-4151-b69a-fae1d4b3c881)| 
+
