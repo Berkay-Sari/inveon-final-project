@@ -108,4 +108,28 @@ public class UserService(
 
         return ServiceResult.Error(errorDetailsForUpdate, HttpStatusCode.BadRequest);
     }
+
+    public async Task<ServiceResult> ChangePassword(ChangePasswordRequest request)
+    {
+        var userId = UserContext.GetUserId(httpContextAccessor);
+        var user = await userManager.FindByIdAsync(userId.ToString());
+
+        var result = await userManager.ChangePasswordAsync(user!, request.CurrentPassword, request.NewPassword);
+
+        if (result.Succeeded)
+        {
+            return ServiceResult.SuccessAsNoContent();
+        }
+
+        var errorDetailsForPasswordChange = new ProblemDetails
+        {
+            Title = "Password change failed",
+            Detail = string.Join(", ", result.Errors.Select(e => e.Description)),
+            Status = (int)HttpStatusCode.BadRequest
+        };
+
+        logger.LogError("Password change failed: {Errors}, User: {UserName}", errorDetailsForPasswordChange.Detail, user!.UserName);
+
+        return ServiceResult.Error(errorDetailsForPasswordChange, HttpStatusCode.BadRequest);
+    }
 }

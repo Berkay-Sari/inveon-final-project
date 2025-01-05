@@ -1,16 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import ProfileCourse from '../components/ProfileCourse';
-import LoadingSpinner from '../components/LoadingSpinner'; // LoadingSpinner bileşenini ekliyoruz
+import LoadingSpinner from '../components/LoadingSpinner';
 import axios from 'axios';
+import alertify from 'alertifyjs';
 
 function Profile() {
     const { user } = useContext(AppContext);
     const [editMode, setEditMode] = useState(false);
-    const [profileData, setProfileData] = useState(null); // Kullanıcı bilgileri
-    const [courses, setCourses] = useState([]); // Kullanıcının kursları
-    const [purchaseHistory, setPurchaseHistory] = useState([]); // Satın alma geçmişi
-    const [loading, setLoading] = useState(true); // Yükleme durumu
+    const [profileData, setProfileData] = useState(null);
+    const [courses, setCourses] = useState([]);
+    const [purchaseHistory, setPurchaseHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [formLoading, setFormLoading] = useState(false);
+    const [passwordLoading, setPasswordLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         phoneNumber: '',
@@ -19,9 +22,19 @@ function Profile() {
         email: '',
         phoneNumber: '',
     });
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+    });
+    const [passwordErrors, setPasswordErrors] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+    });
 
     const fetchUserData = async () => {
-        setLoading(true); // Yükleme başlat
+        setLoading(true);
         try {
             const response = await axios.get('/api/users');
             const userData = response.data.data;
@@ -46,7 +59,7 @@ function Profile() {
         } catch (error) {
             console.error('Error fetching user data or courses:', error);
         } finally {
-            setLoading(false); // Yükleme durumu sonlandır
+            setLoading(false);
         }
     };
 
@@ -64,15 +77,18 @@ function Profile() {
         }));
         setFormErrors((prevErrors) => ({
             ...prevErrors,
-            [name]: '', // Hata mesajını sıfırla
+            [name]: '',
         }));
+    };
+
+    const handleEditToggle = () => {
+        setEditMode((prev) => !prev);
     };
 
     const validateForm = () => {
         let valid = true;
         const errors = {};
 
-        // Email Validation
         if (!formData.email) {
             errors.email = "Email can't be empty.";
             valid = false;
@@ -81,7 +97,6 @@ function Profile() {
             valid = false;
         }
 
-        // Phone Number Validation
         if (formData.phoneNumber) {
             if (!/^(\+?[0-9]{10,15})$/.test(formData.phoneNumber)) {
                 errors.phoneNumber = 'Phone number is not valid.';
@@ -93,37 +108,100 @@ function Profile() {
         return valid;
     };
 
-    const handleEditToggle = () => {
-        setEditMode((prev) => !prev);
-    };
-
     const handleSave = async () => {
         if (!validateForm()) {
             return;
         }
 
+        setFormLoading(true);
+
         try {
             const updatedData = { email: formData.email, phoneNumber: formData.phoneNumber };
-            const res = await axios.put('/api/users', updatedData);
+            await axios.put('/api/users', updatedData);
             setEditMode(false);
             setProfileData((prev) => ({
                 ...prev,
                 ...updatedData,
             }));
+            alertify.success('Profile updated successfully.');
         } catch (error) {
             console.error('Error updating profile:', error);
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+        setPasswordErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: '',
+        }));
+    };
+
+    const validatePassword = () => {
+        let valid = true;
+        const errors = {};
+
+        if (!passwordData.currentPassword) {
+            errors.currentPassword = "Current password can't be empty.";
+            valid = false;
+        }
+
+        if (!passwordData.newPassword || passwordData.newPassword.length < 6 ||
+            !/[a-zA-Z]/.test(passwordData.newPassword) || !/\d/.test(passwordData.newPassword)) {
+            errors.newPassword = 'New password must be at least 6 characters long, with letters and numbers.';
+            valid = false;
+        }
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            errors.confirmPassword = 'Passwords do not match.';
+            valid = false;
+        }
+
+        setPasswordErrors(errors);
+        return valid;
+    };
+
+    const handlePasswordSubmit = async () => {
+        if (!validatePassword()) return;
+
+        setPasswordLoading(true);
+
+        try {
+            await axios.put('/api/Users/change-password', {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword,
+            });
+            alertify.success('Password changed successfully.');
+            setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+            });
+        } catch (error) {
+            console.error('Error changing password:', error);
+            setPasswordErrors((prev) => ({
+                ...prev,
+                currentPassword: 'Current password is incorrect.',
+            }));
+        } finally {
+            setPasswordLoading(false); 
         }
     };
 
     if (!user) return <p className="alert alert-warning text-center mt-5">Please log in to view your profile.</p>;
 
-    if (loading) return <LoadingSpinner />; // Yüklenirken spinner göster
+    if (loading) return <LoadingSpinner />;
 
     return (
         <div className="container mt-5">
             <h2 className="text-center mb-4">My Profile</h2>
             <div className="row">
-                {/* Sol Taraf: Profil Bilgileri */}
                 <div className="col-md-6">
                     <div className="card p-4">
                         <h4>Profile Information</h4>
@@ -171,21 +249,69 @@ function Profile() {
                         </div>
                         {editMode && (
                             <div className="text-center">
-                                <button className="btn btn-primary me-2" onClick={handleSave}>
-                                    Save Changes
-                                </button>
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() => setEditMode(false)}
-                                >
-                                    Cancel
-                                </button>
+                                {formLoading ? (
+                                    <p className="text-muted">Updating profile, please wait...</p>
+                                ) : (
+                                    <>
+                                        <button className="btn btn-primary me-2" onClick={handleSave}>
+                                            Save Changes
+                                        </button>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => setEditMode(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         )}
+                        <hr />
+                        <h4>Change Password</h4>
+                        <div className="mb-3">
+                            <label className="form-label">Current Password</label>
+                            <input
+                                type="password"
+                                name="currentPassword"
+                                value={passwordData.currentPassword}
+                                onChange={handlePasswordChange}
+                                className="form-control"
+                            />
+                            {passwordErrors.currentPassword && <div className="text-danger">{passwordErrors.currentPassword}</div>}
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">New Password</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                value={passwordData.newPassword}
+                                onChange={handlePasswordChange}
+                                className="form-control"
+                            />
+                            {passwordErrors.newPassword && <div className="text-danger">{passwordErrors.newPassword}</div>}
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Confirm New Password</label>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={passwordData.confirmPassword}
+                                onChange={handlePasswordChange}
+                                className="form-control"
+                            />
+                            {passwordErrors.confirmPassword && <div className="text-danger">{passwordErrors.confirmPassword}</div>}
+                        </div>
+                        <div className="text-center">
+                            {passwordLoading ? (
+                                <p className="text-muted">Updating password, please wait...</p>
+                            ) : (
+                                <button className="btn btn-primary" onClick={handlePasswordSubmit}>
+                                    Change Password
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
-
-                {/* Sağ Taraf: Kurslar */}
                 <div className="col-md-6">
                     <div className="card p-4">
                         <h4>My Courses</h4>
@@ -199,8 +325,6 @@ function Profile() {
                     </div>
                 </div>
             </div>
-
-            {/* Dropdown: Satın Alma Geçmişi */}
             <div className="row mt-4">
                 <div className="col-12">
                     <div className="card p-4">

@@ -16,4 +16,5 @@ public interface IUserService
     Task<ServiceResult<UserProfileResponse>> GetProfileInfo();
 
     Task<ServiceResult> UpdateProfileInfo(UpdateUserProfileRequest request);
+    Task<ServiceResult> ChangePassword(ChangePasswordRequest request);
 }

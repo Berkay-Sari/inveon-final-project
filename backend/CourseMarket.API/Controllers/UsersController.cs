@@ -36,4 +36,11 @@ public class UsersController(IUserService userService) : CustomBaseController
         return CreateActionResult(await userService.UpdateProfileInfo(request));
     }
 
+    [HttpPut("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        return CreateActionResult(await userService.ChangePassword(request));
+    }
+
 }

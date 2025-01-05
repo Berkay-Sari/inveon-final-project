@@ -16,7 +16,6 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserProfileRequest>
             .Matches(@"^(\+?[0-9]{10,15})$")
             .WithMessage("Phone number is not valid.")
             .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
-
     }
 }
 
