@@ -1,0 +1,1556 @@
+{
+	"info": {
+		"_postman_id": "4e7da467-71e3-4688-863b-eff2b83bf465",
+		"name": "API documentation",
+		"description": "# 📄 CourseMarket API\n\n## Authentication & Authorization\n\nAuth üzerinden login sağlanıp responseda accesToken ve refreshToken gönderilmiştir. Expire olan accesToken'a sahip kullanıcı refreshToken ile login olmayı deneyebilir. Yetkisiz erişime sahip olmayan endpointlerde kod içinde HttpContextAccessor üzerinden o anda giriş yapmış yetkili kullanıcı çekilir.\n\n### Authentication error response\n\nEğer Bearer Auth. header'da yoksa veya invalid tokan'sa hata mesajı dönülür.\n\n| Header | Description |\n| --- | --- |\n| `Bearer` | Access Token değeri |",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21415403"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODdhY2RhZi0xMjQ1LTQ2ZjktOWQ1Ni1lMTNmZTI5MWE5NDQiLCJ1bmlxdWVfbmFtZSI6InVzZXIxIiwiZXhwIjoxNzM2MTg1NjQ1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.-DPkIo1lVVyfnylWWBZRr4SaD7-ql-k5r5PYK7NCiMM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Gets information about the authenticated user."
+					},
+					"response": [
+						{
+							"name": "Valid access token",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/users",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 11:52:46 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"fullName\": \"First1 Last1\",\n        \"email\": \"user1@gmail.com\",\n        \"phoneNumber\": null,\n        \"purchasedCourses\": \"[\\\"6bcf87d0-1104-4f67-8f77-e0a696f6f066\\\",\\\"de383658-b3e6-40c5-b521-be45219353ea\\\"]\"\n    },\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "User-Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Kullanıcının sahip olduğu kurs id'lerini döner."
+					},
+					"response": [
+						{
+							"name": "User-Courses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/users/courses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users",
+										"courses"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 11:54:51 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        \"6bcf87d0-1104-4f67-8f77-e0a696f6f066\",\n        \"de383658-b3e6-40c5-b521-be45219353ea\"\n    ],\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"string@gmail.com\",\r\n  \"phoneNumber\": \"5389433433\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7180/api/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Json Body'den gelen email ve telefon numarasını validasyona soktukltan sonra günceller."
+					},
+					"response": [
+						{
+							"name": "Not-Valid inputs",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"string\",\r\n  \"phoneNumber\": \"string\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/users/",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 11:56:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"fail\": {\n        \"title\": \"Validation Error\",\n        \"status\": 400,\n        \"detail\": \"One or more validation errors occurred.\",\n        \"errors\": {\n            \"Email\": [\n                \"Email is not valid.\"\n            ],\n            \"PhoneNumber\": [\n                \"Phone number is not valid.\"\n            ]\n        }\n    }\n}"
+						},
+						{
+							"name": "Valid inputs",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"string@gmail.com\",\r\n  \"phoneNumber\": \"5389433433\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/users",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"userName\": \"string\",\r\n  \"email\": \"stringg@gmail.com\",\r\n  \"password\": \"string1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7180/api/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Json Body'deki hesap bilgilerini valide ettikten sonra hesap oluşturur."
+					},
+					"response": [
+						{
+							"name": "valid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"userName\": \"string\",\r\n  \"email\": \"stringg@gmail.com\",\r\n  \"password\": \"string1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/users",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:00:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "/api/Users/d0f909f3-1327-4466-bf01-dbd57bd0ba71"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"succeeded\": true,\n        \"errors\": []\n    },\n    \"urlAsCreated\": \"/api/Users/d0f909f3-1327-4466-bf01-dbd57bd0ba71\",\n    \"status\": 201,\n    \"fail\": null\n}"
+						},
+						{
+							"name": "non-valid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"userName\": \"string\",\r\n  \"email\": \"stringg@gmail.com\",\r\n  \"password\": \"s1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/users",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:02:33 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": null,\n    \"urlAsCreated\": null,\n    \"status\": 400,\n    \"fail\": {\n        \"title\": \"User Creation Failed\",\n        \"status\": 400,\n        \"detail\": \"Passwords must be at least 6 characters.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"currentPassword\": \"string\",\r\n  \"newPassword\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7180/api/Users/change-password",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Users",
+								"change-password"
+							]
+						},
+						"description": "Json Body'deki currentPassword doğru ise şifreyi newPassaword yapar."
+					},
+					"response": [
+						{
+							"name": "incorrect password",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currentPassword\": \"string\",\r\n  \"newPassword\": \"string\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Users/change-password",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Users",
+										"change-password"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:05:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"fail\": {\n        \"title\": \"Password change failed\",\n        \"status\": 400,\n        \"detail\": \"Incorrect password.\"\n    }\n}"
+						},
+						{
+							"name": "correct password",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currentPassword\": \"pwd2001pwd\",\r\n  \"newPassword\": \"pwd2001pwd_v2\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Users/change-password",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Users",
+										"change-password"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "`/Users` endpointleri kullanıcı oluşturma (register) dışında access token gerektirir. Profil bilgileri getirme ve güncelleme, Şifre değiştirme, Kullanıcı kurslarını getirme işlemlerini sağlar.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODdhY2RhZi0xMjQ1LTQ2ZjktOWQ1Ni1lMTNmZTI5MWE5NDQiLCJ1bmlxdWVfbmFtZSI6InVzZXIxIiwiZXhwIjoxNzM2MTg1NjQ1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.-DPkIo1lVVyfnylWWBZRr4SaD7-ql-k5r5PYK7NCiMM",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Paged Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Query Stringinde Page ve Size değerleri alır. Paginated şekilde sitedeki kursları döner."
+					},
+					"response": [
+						{
+							"name": "Paged Courses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Courses?page=1&size=5",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Courses"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:13:16 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"items\": [\n            {\n                \"id\": \"6bcf87d0-1104-4f67-8f77-e0a696f6f066\",\n                \"name\": \"React\",\n                \"description\": \"Dive into the world of React, the powerful JavaScript library for building dynamic and responsive user interfaces. This course provides a comprehensive guide to React's core concepts, tools, and ecosystem. Whether you're a beginner looking to get started or an experienced developer wanting to refine your skills, this course will help you build modern, scalable web applications with confidence.\",\n                \"price\": 25.99,\n                \"imageUrl\": \"resource/course-images\\\\react.png\"\n            },\n            {\n                \"id\": \"de383658-b3e6-40c5-b521-be45219353ea\",\n                \"name\": \"ASP.NET\",\n                \"description\": \"Explore the power of ASP.NET, Microsoft's versatile framework for building robust and scalable web applications. This course offers a thorough introduction to ASP.NET's core features, tools, and ecosystem. Whether you're a beginner aiming to build dynamic web solutions or an experienced developer looking to deepen your skills, this course equips you to create modern, secure, and high-performance web applications with confidence.\",\n                \"price\": 35.89,\n                \"imageUrl\": \"resource/course-images\\\\aspnet.png\"\n            },\n            {\n                \"id\": \"31c27649-20cf-49ae-b8e7-4e67fff9d6a5\",\n                \"name\": \"AYT Fizik\",\n                \"description\": \"The AYT Physics course is designed to provide comprehensive guidance for students preparing for university entrance exams. This course helps you understand physical phenomena, grasp fundamental concepts, and solve questions quickly and accurately. Covering all topics from mechanics to electricity and magnetism, waves and optics to modern physics, it equips you with the knowledge and practical skills needed for success. \",\n                \"price\": 15.75,\n                \"imageUrl\": \"resource/course-images\\\\fizik.jpg\"\n            },\n            {\n                \"id\": \"6792c845-f21a-4386-ac52-6693484ae95a\",\n                \"name\": \"AYT Matematik\",\n                \"description\": \"The AYT Mathematics course is tailored for students preparing for university entrance exams, offering a deep dive into advanced mathematical concepts. This course covers key topics such as functions, derivatives, integrals, trigonometry, and analytical geometry, providing the knowledge and problem-solving techniques essential for exam success. This course ensures you’re well-prepared to achieve high scores and excel in your academic journey.\",\n                \"price\": 29.99,\n                \"imageUrl\": \"resource/course-images\\\\math.jpg\"\n            },\n            {\n                \"id\": \"f557cd4f-75f0-43fc-a9fe-7b3bae41b5b0\",\n                \"name\": \"AYT Kimya\",\n                \"description\": \"The AYT Chemistry course prepares students for university entrance exams by covering advanced topics like chemical equilibrium, thermodynamics, electrochemistry, and organic chemistry. Through clear explanations and practical problem-solving strategies, this course helps students master complex concepts and improve their exam performance. Perfect for those building a foundation or refining their skills, it ensures confidence and success in tackling challenging chemistry questions.\",\n                \"price\": 19.99,\n                \"imageUrl\": \"resource/course-images\\\\kimya.jpg\"\n            }\n        ],\n        \"pageIndex\": 1,\n        \"totalPages\": 3,\n        \"hasPreviousPage\": false,\n        \"hasNextPage\": true\n    },\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "instructorId",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "imageUrl",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:7180/api/Courses",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Courses"
+							]
+						},
+						"description": "Body'den gelen verilerle yeni kurs oluşturur. Kimliği doğrulanmış kullanıcının buraya istek atabilmesi için \"Instructor\" Rolüne sahip olması gerekir."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/Courses/courseId",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Courses",
+								"courseId"
+							]
+						},
+						"description": "verilen id'deki kursu siler. Yine eğitmen rolünde kullanıcı accessToken'ı olmalı."
+					},
+					"response": []
+				},
+				{
+					"name": "Course By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/courses/0281e88a-98e6-4580-be16-5fb47cc6c3c8",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"courses",
+								"0281e88a-98e6-4580-be16-5fb47cc6c3c8"
+							]
+						},
+						"description": "id'si verilen kursun detaylarını getirir."
+					},
+					"response": [
+						{
+							"name": "0281e88a-98e6-4580-be16-5fb47cc6c3c8",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/courses/0281e88a-98e6-4580-be16-5fb47cc6c3c8",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"courses",
+										"0281e88a-98e6-4580-be16-5fb47cc6c3c8"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:20:43 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": \"0281e88a-98e6-4580-be16-5fb47cc6c3c8\",\n        \"name\": \"AYT Biyoloji\",\n        \"description\": \"The AYT Biology course is designed to help students excel in university entrance exams by providing a detailed understanding of advanced biology topics. \",\n        \"price\": 15.5,\n        \"category\": \"Science\",\n        \"imageUrl\": \"resource/course-images\\\\biyoloji.jpg\",\n        \"instructorName\": \"Fatih Terim\"\n    },\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7180/api/courses/courseId",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"courses",
+								"courseId"
+							]
+						},
+						"description": "eğitmen rolüne sahip kullanıcı buraya istek atarak kursu güncelleyebilir."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter By Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Kursları isme göre filtreler. Contains algoritmasına göre sonuçları döner. Page ve Size query string ile çalışır."
+					},
+					"response": [
+						{
+							"name": "ayt",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Courses/filter-by-name?name=ayt&page=1&size=4",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Courses",
+										"filter-by-name"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "ayt"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:24:31 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"items\": [\n            {\n                \"id\": \"31c27649-20cf-49ae-b8e7-4e67fff9d6a5\",\n                \"name\": \"AYT Fizik\",\n                \"description\": \"The AYT Physics course is designed to provide comprehensive guidance for students preparing for university entrance exams. This course helps you understand physical phenomena, grasp fundamental concepts, and solve questions quickly and accurately. Covering all topics from mechanics to electricity and magnetism, waves and optics to modern physics, it equips you with the knowledge and practical skills needed for success. \",\n                \"price\": 15.75,\n                \"imageUrl\": \"resource/course-images\\\\fizik.jpg\"\n            },\n            {\n                \"id\": \"6792c845-f21a-4386-ac52-6693484ae95a\",\n                \"name\": \"AYT Matematik\",\n                \"description\": \"The AYT Mathematics course is tailored for students preparing for university entrance exams, offering a deep dive into advanced mathematical concepts. This course covers key topics such as functions, derivatives, integrals, trigonometry, and analytical geometry, providing the knowledge and problem-solving techniques essential for exam success. This course ensures you’re well-prepared to achieve high scores and excel in your academic journey.\",\n                \"price\": 29.99,\n                \"imageUrl\": \"resource/course-images\\\\math.jpg\"\n            },\n            {\n                \"id\": \"f557cd4f-75f0-43fc-a9fe-7b3bae41b5b0\",\n                \"name\": \"AYT Kimya\",\n                \"description\": \"The AYT Chemistry course prepares students for university entrance exams by covering advanced topics like chemical equilibrium, thermodynamics, electrochemistry, and organic chemistry. Through clear explanations and practical problem-solving strategies, this course helps students master complex concepts and improve their exam performance. Perfect for those building a foundation or refining their skills, it ensures confidence and success in tackling challenging chemistry questions.\",\n                \"price\": 19.99,\n                \"imageUrl\": \"resource/course-images\\\\kimya.jpg\"\n            },\n            {\n                \"id\": \"0281e88a-98e6-4580-be16-5fb47cc6c3c8\",\n                \"name\": \"AYT Biyoloji\",\n                \"description\": \"The AYT Biology course is designed to help students excel in university entrance exams by providing a detailed understanding of advanced biology topics. \",\n                \"price\": 15.5,\n                \"imageUrl\": \"resource/course-images\\\\biyoloji.jpg\"\n            }\n        ],\n        \"pageIndex\": 1,\n        \"totalPages\": 2,\n        \"hasPreviousPage\": false,\n        \"hasNextPage\": true\n    },\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Filter By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Name'in kategori versiyonuı. Kategoriye göre filtreler."
+					},
+					"response": [
+						{
+							"name": "tech",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Courses/filter-by-category?category=tech&page=1&size=4",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Courses",
+										"filter-by-category"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "tech"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:25:13 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"items\": [\n            {\n                \"id\": \"6bcf87d0-1104-4f67-8f77-e0a696f6f066\",\n                \"name\": \"React\",\n                \"description\": \"Dive into the world of React, the powerful JavaScript library for building dynamic and responsive user interfaces. This course provides a comprehensive guide to React's core concepts, tools, and ecosystem. Whether you're a beginner looking to get started or an experienced developer wanting to refine your skills, this course will help you build modern, scalable web applications with confidence.\",\n                \"price\": 25.99,\n                \"imageUrl\": \"resource/course-images\\\\react.png\"\n            },\n            {\n                \"id\": \"de383658-b3e6-40c5-b521-be45219353ea\",\n                \"name\": \"ASP.NET\",\n                \"description\": \"Explore the power of ASP.NET, Microsoft's versatile framework for building robust and scalable web applications. This course offers a thorough introduction to ASP.NET's core features, tools, and ecosystem. Whether you're a beginner aiming to build dynamic web solutions or an experienced developer looking to deepen your skills, this course equips you to create modern, secure, and high-performance web applications with confidence.\",\n                \"price\": 35.89,\n                \"imageUrl\": \"resource/course-images\\\\aspnet.png\"\n            },\n            {\n                \"id\": \"1d959d9a-a97c-4991-a1a9-7123ae596f2c\",\n                \"name\": \"Machine Learning\",\n                \"description\": \"This course covers Machine Learning fundamentals, including supervised, unsupervised, and deep learning. Students will learn key algorithms, data analysis, and model evaluation using tools like Python and TensorFlow. Hands-on projects emphasize practical applications in areas like healthcare and finance. Basic knowledge of Python, linear algebra, and probability is recommended.\",\n                \"price\": 39.25,\n                \"imageUrl\": \"resource/course-images\\\\yapayzeka.jpg\"\n            },\n            {\n                \"id\": \"e5bdad3b-ed6b-48fe-851d-ba9f3cfb2c82\",\n                \"name\": \"Generative AI\",\n                \"description\": \"This course explores the fundamentals and applications of Generative AI, focusing on models like GANs (Generative Adversarial Networks), VAEs (Variational Autoencoders), and large language models. Students will learn how these systems generate realistic images, text, audio, and more. Hands-on projects include building generative models and applying them to creative tasks like content generation, image synthesis, and AI-driven design. \",\n                \"price\": 99.99,\n                \"imageUrl\": \"resource/course-images\\\\generative_ai.png\"\n            }\n        ],\n        \"pageIndex\": 1,\n        \"totalPages\": 1,\n        \"hasPreviousPage\": false,\n        \"hasNextPage\": false\n    },\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Kursa dair oluşturma silme okuma güncelleme işlemlerini yapar. Okuma dışı işlemler için rol tabanlı eğitmen yetkisi gerekir."
+		},
+		{
+			"name": "Baskets",
+			"item": [
+				{
+					"name": "basket",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Sepetteki kursları getirir."
+					},
+					"response": [
+						{
+							"name": "auth users basket ,",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Baskets",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Baskets"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:26:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"courseId\": \"31c27649-20cf-49ae-b8e7-4e67fff9d6a5\",\n            \"courseName\": \"AYT Fizik\",\n            \"price\": 15.75,\n            \"imageUrl\": \"resource/course-images\\\\fizik.jpg\"\n        }\n    ],\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "add course to basket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODdhY2RhZi0xMjQ1LTQ2ZjktOWQ1Ni1lMTNmZTI5MWE5NDQiLCJ1bmlxdWVfbmFtZSI6InVzZXIxIiwiZXhwIjoxNzM2MTg3MTQ0LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.WrwKse_MimprKOXx7P0t1AmgZkfYd40z7_JD3utkbyo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/Baskets/courseId",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Baskets",
+								"courseId"
+							]
+						},
+						"description": "sepete courseId'li kursu ekler."
+					},
+					"response": []
+				},
+				{
+					"name": "delete course from basket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"description": "courseId'li kursu sepetten siler."
+					},
+					"response": []
+				}
+			],
+			"description": "Sepet mantığını gerçekleştirdiğimiz endpoint. Tüm uzantılarında kimlik doğrulama gerektirir ve HttpContext üzerinden giriş yapmış kullanıcının sepetini getirme, ekleme, çıkarma işlemleri yapılır."
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "all orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "tamamlanan siparşlerindeki kurs ismi, fiyatı, tarihi, bilgilerini döner. siparişte alınan kurslar arrayin elemanları şeklinde gelir ve böylece paketler gibi siparişler ayrışır."
+					},
+					"response": [
+						{
+							"name": "Get All orders",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Orders",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Orders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:29:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"orderCode\": \"60276878219503\",\n            \"date\": \"2025-01-05T08:40:40.328606Z\",\n            \"courses\": [\n                {\n                    \"name\": \"React\",\n                    \"price\": 25.99\n                },\n                {\n                    \"name\": \"ASP.NET\",\n                    \"price\": 35.89\n                }\n            ]\n        }\n    ],\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "create order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODdhY2RhZi0xMjQ1LTQ2ZjktOWQ1Ni1lMTNmZTI5MWE5NDQiLCJ1bmlxdWVfbmFtZSI6InVzZXIxIiwiZXhwIjoxNzM2MTg3MTQ0LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.WrwKse_MimprKOXx7P0t1AmgZkfYd40z7_JD3utkbyo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/Orders?totalAmount=12",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Orders"
+							],
+							"query": [
+								{
+									"key": "totalAmount",
+									"value": "12"
+								}
+							]
+						},
+						"description": "o anki sepette bulunan kurslarla sipariş oluşturur. ilişkili payment satırını günceller."
+					},
+					"response": [
+						{
+							"name": "add current basket items to order with total amount price",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Orders?totalAmount=12",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Orders"
+									],
+									"query": [
+										{
+											"key": "totalAmount",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:30:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "Yine tüm endpointlerine kimliği doğrulanmış kullanıcıalr istek atabilir. Kullanıcının tamamlanmış siparşilerini elde etmesini sağlayan bir apidir."
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODdhY2RhZi0xMjQ1LTQ2ZjktOWQ1Ni1lMTNmZTI5MWE5NDQiLCJ1bmlxdWVfbmFtZSI6InVzZXIxIiwiZXhwIjoxNzM2MTg3MTQ0LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.WrwKse_MimprKOXx7P0t1AmgZkfYd40z7_JD3utkbyo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/Payments?isSuccess=true",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Payments"
+							],
+							"query": [
+								{
+									"key": "isSuccess",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "sucessful payment",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:7180/api/Payments?isSuccess=true",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Payments"
+									],
+									"query": [
+										{
+											"key": "isSuccess",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:32:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": \"357343592631\",\n    \"urlAsCreated\": null,\n    \"status\": 200,\n    \"fail\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Ödeme işlemlerini temsil eden endpoint. Sadece payment oluşturmaya yarar. Pending statusunde bir sipariş oluşturur ve isSuccesse göre bu statüyü şekillendirir."
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7180/api/Auth/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7180",
+							"path": [
+								"api",
+								"Auth",
+								"login"
+							]
+						},
+						"description": "username ve password ile accestoken ve refreshtoken almayı sağlar."
+					},
+					"response": [
+						{
+							"name": "wrong credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userName\": \"string\",\r\n  \"password\": \"string\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Auth/login",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Auth",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:34:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": null,\n    \"urlAsCreated\": null,\n    \"status\": 400,\n    \"fail\": {\n        \"title\": \"Login Failed\",\n        \"status\": 400,\n        \"detail\": \"Invalid username or password\"\n    }\n}"
+						},
+						{
+							"name": "correct credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userName\": \"user2\",\r\n  \"password\": \"pwd2002pwd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Auth/login",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Auth",
+										"login"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:37:13 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": ""
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYzUyNDk2NC01NTFlLTRhMzctOTFmOS05OGY2NGJjNGM2MjgiLCJ1bmlxdWVfbmFtZSI6InVzZXIyIiwiZXhwIjoxNzM2MTg4NjMzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.ArFXrjbzAoaD5LjFYi_oW5DGbrf9pvuZosDPxxmHaRI\",\n        \"refreshToken\": \"l2TAowSkkWZ3T4J8C7wfKpH5dIMbw7QPCVjAkrNJkak=\",\n        \"expiration\": \"2025-01-06T21:37:13.9590757+03:00\"\n    },\n    \"urlAsCreated\": \" \",\n    \"status\": 201,\n    \"fail\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "loginByRefresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"description": "süresi dolan accestokenı yenilemek için elinde bulunan refresh tokenı body'de göndererek yeni bir accesToken elde etmeyi sağlar. Bu işlem sonrasında refreshToken'da yenilenir."
+					},
+					"response": [
+						{
+							"name": "invalidRefreshToken",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\"string\"",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Auth/refresh",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Auth",
+										"refresh"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:36:53 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": null,\n    \"urlAsCreated\": null,\n    \"status\": 400,\n    \"fail\": {\n        \"title\": \"Login Failed\",\n        \"status\": 400,\n        \"detail\": \"Invalid refresh token\"\n    }\n}"
+						},
+						{
+							"name": "loginByRefresh",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\"fKYiRGeo0ITsbu1zNEUBWjZE8zW3tHV7o2LBNEFRpeU=\"",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7180/api/Auth/refresh",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7180",
+									"path": [
+										"api",
+										"Auth",
+										"refresh"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 05 Jan 2025 12:42:36 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": ""
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYzUyNDk2NC01NTFlLTRhMzctOTFmOS05OGY2NGJjNGM2MjgiLCJ1bmlxdWVfbmFtZSI6InVzZXIyIiwiZXhwIjoxNzM2MTg4OTU2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcxODAifQ.HagAEHQAP7lYPpasuXijUXxwiaJ9udWNp8lFiPE46vo\",\n        \"refreshToken\": \"Op7EBHfJpWzLTmq4DoZKdTgRO633QNwCwgz9NMuiUGg=\",\n        \"expiration\": \"2025-01-06T21:42:36.5379554+03:00\"\n    },\n    \"urlAsCreated\": \" \",\n    \"status\": 201,\n    \"fail\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Kullanıcı yetkilendirme. Login olunca infolar doğruysa acces token, refresh token döner. Bir tane de login by refresh token endpointi var acces'in ömrü bitince refreshle buraya gelir kullanıcı."
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
