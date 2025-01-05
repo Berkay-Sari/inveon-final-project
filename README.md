@@ -34,5 +34,5 @@ Onion Architecture yaklaşımı ile kurgulanmış Kurs Satış sitesi
 
 ## Note: 
 ```
-API Dökümantasyonu Postman Collection olarak sağlanmıştır.
+API Dökümantasyonu Postman Collection olarak sağlanmıştır. Postman'i açıp sol üst kısımdan import dedikten sonra repodaki collection'ı sürükleyip içeri bırakabilirsiniz.
 ```
