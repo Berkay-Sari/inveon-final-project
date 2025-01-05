@@ -190,7 +190,7 @@ function Profile() {
                 currentPassword: 'Current password is incorrect.',
             }));
         } finally {
-            setPasswordLoading(false); 
+            setPasswordLoading(false);
         }
     };
 

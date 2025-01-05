@@ -65,16 +65,16 @@ const Basket = () => {
             <h1 className="text-center mb-4">Basket</h1>
             {showSuccessMessage && (
                 <div className="alert alert-success text-center" role="alert">
-                Your order was successful! Your order code is:{" "}
-                <span className="fw-bold">{orderCode}</span>
+                    Your order was successful! Your order code is:{" "}
+                    <span className="fw-bold">{orderCode}</span>
 
-                . Happy learning!
-                <div className="mt-3">
-                    <Link to="/" className="btn btn-primary">
-                        Continue Exploring Courses
-                    </Link>
+                    . Happy learning!
+                    <div className="mt-3">
+                        <Link to="/" className="btn btn-primary">
+                            Continue Exploring Courses
+                        </Link>
+                    </div>
                 </div>
-            </div>
             )}
             {!showSuccessMessage && courses.length === 0 ? (
                 <div className="text-center">
@@ -112,13 +112,13 @@ const Basket = () => {
                             </div>
                         ))}
                     </div>
-        {!showSuccessMessage && courses.length > 0 && (
-            <div className="text-center mt-4">
-                <button className="btn btn-success btn-lg" onClick={handleCheckout}>
-                    Complete Order
-                </button>
-            </div>
-        )}
+                    {!showSuccessMessage && courses.length > 0 && (
+                        <div className="text-center mt-4">
+                            <button className="btn btn-success btn-lg" onClick={handleCheckout}>
+                                Complete Order
+                            </button>
+                        </div>
+                    )}
                 </>
             )}
 

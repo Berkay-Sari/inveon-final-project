@@ -32,7 +32,7 @@ function Login() {
                         alertify.error('Server error. Please try again.');
                     }
                     const redirectUrl = new URLSearchParams(location.search).get("redirect");
-                    navigate(redirectUrl || "/"); 
+                    navigate(redirectUrl || "/");
                 } else {
                     alertify.error('Server error. Please try again.');
                 }

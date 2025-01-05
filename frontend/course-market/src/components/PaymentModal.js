@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import alertify from 'alertifyjs';
 import axios from 'axios';
 
-const PaymentModal = ({ show, totalAmount, onClose, onPaymentSuccess, setOrderCode}) => {
+const PaymentModal = ({ show, totalAmount, onClose, onPaymentSuccess, setOrderCode }) => {
     const [cardDetails, setCardDetails] = useState({
         number: "",
         name: "",
@@ -11,10 +11,10 @@ const PaymentModal = ({ show, totalAmount, onClose, onPaymentSuccess, setOrderCo
     });
 
     const [errors, setErrors] = useState({});
-    const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(true); 
+    const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(true);
 
     if (!show) {
-        return null; 
+        return null;
     }
 
     const handleInputChange = (e) => {
@@ -71,7 +71,7 @@ const PaymentModal = ({ show, totalAmount, onClose, onPaymentSuccess, setOrderCo
         if (validateForm()) {
             try {
                 var response = await axios.post('/api/Payments', null, {
-                    params: { isSuccess : isPaymentSuccessful },
+                    params: { isSuccess: isPaymentSuccessful },
                     headers: { 'Content-Type': 'application/json' },
                 });
                 setOrderCode(response.data.data);
@@ -79,7 +79,7 @@ const PaymentModal = ({ show, totalAmount, onClose, onPaymentSuccess, setOrderCo
                 onClose();
             } catch (error) {
                 alertify.error(error.response.data.fail.detail);
-            } 
+            }
         } else {
             alertify.error("Please fix the errors in the form");
         }
