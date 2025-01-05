@@ -104,23 +104,6 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b04719b9-54ff-46e7-9657-25b8813704a6"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "eb9b72ee-f13a-45ea-8bd8-8b31729ea975",
-                            EmailConfirmed = false,
-                            FirstName = "Fatih",
-                            LastName = "Terim",
-                            LockoutEnabled = false,
-                            NormalizedUserName = "INSTRUCTOR1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI2YNUbCsua97YS819crpPPzuEZ/2HNI4abeiTR9nIuwe+dU7/C/fgcvlYHTsGjuEA==",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "instructor1"
-                        });
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Basket", b =>
@@ -141,7 +124,7 @@ namespace CourseMarket.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Baskets", (string)null);
+                    b.ToTable("Baskets");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Course", b =>
@@ -180,7 +163,7 @@ namespace CourseMarket.Infrastructure.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.File", b =>
@@ -214,7 +197,7 @@ namespace CourseMarket.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files", (string)null);
+                    b.ToTable("Files");
 
                     b.HasDiscriminator().HasValue("File");
 
@@ -254,7 +237,7 @@ namespace CourseMarket.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("CourseMarket.Domain.Entities.Payment", b =>
@@ -289,7 +272,7 @@ namespace CourseMarket.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -317,14 +300,6 @@ namespace CourseMarket.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("a23a5978-3307-497b-8440-f9e5d0923b31"),
-                            Name = "Instructor",
-                            NormalizedName = "INSTRUCTOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -409,13 +384,6 @@ namespace CourseMarket.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("b04719b9-54ff-46e7-9657-25b8813704a6"),
-                            RoleId = new Guid("a23a5978-3307-497b-8440-f9e5d0923b31")
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>

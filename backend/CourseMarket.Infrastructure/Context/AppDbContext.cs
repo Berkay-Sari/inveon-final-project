@@ -21,44 +21,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<File> Files { get; set; }
     public DbSet<CourseImageFile> CourseImageFiles { get; set; }
     public DbSet<InvoiceFile> InvoiceFiles { get; set; }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Seed Data
-        var instructorId = Guid.NewGuid();
-        var instructorRoleId = Guid.NewGuid();
-        modelBuilder.Entity<IdentityRole<Guid>>().HasData(
-            new IdentityRole<Guid>
-            {
-                Id = instructorRoleId,
-                Name = "Instructor",
-                NormalizedName = "INSTRUCTOR"
-            }
-        );
-
-        var hasher = new PasswordHasher<AppUser>();
-
-        modelBuilder.Entity<AppUser>().HasData(
-            new AppUser
-            {
-                Id = instructorId,
-                UserName = "instructor1",
-                NormalizedUserName = "INSTRUCTOR1",
-                PasswordHash = hasher.HashPassword(null!, "aslan1905"),
-                FirstName = "Fatih",
-                LastName = "Terim"
-            }
-        );
-
-        modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(
-            new IdentityUserRole<Guid>
-            {
-                RoleId = instructorRoleId,
-                UserId = instructorId
-            }
-        );
-
-        base.OnModelCreating(modelBuilder);
-    }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
