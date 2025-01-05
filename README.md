@@ -16,6 +16,8 @@ Projeyi çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
 5. **Seed Data**:
    - **pgAdmin**'i açın ve `CourseMarketAPIDb` veritabanına sağ tıklayarak **Query Tool**'u seçin.
    - Query Tool penceresinde dosya simgesine tıklayın, **seed-data** klasörü altındaki `seed.sql` dosyasını seçin ve çalıştırın. Veriler veritabanına yüklenecektir.
+   - Eğitmen giriş bilgileri = username : **instructor1** password: **aslan1905**
+   - Kullanıcı giriş bilgileri = username : **user1** password: **pwd2001pwd** ve username: **user2** password: **pwd2002pwd**
 6. (Opsiyonel) **Seq ile Log Analizi**:
    - Seq'i kullanmak için aşağıdaki komutu Docker üzerinde çalıştırın:
      ```bash
@@ -34,6 +36,7 @@ Projeyi çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
 - **Logging**: 
   - Loglar, `Serilog` ile hem lokal text dosyasına hem de veritabanına kaydedilmektedir.
   - Logların görselleştirilmesi ve analizi için `Seq` aracı entegre edilmiştir.
+
 
 - **File Management**: 
   - Dosyalar, veritabanında **Table Per Hierarchy (TPH)** yapısı ile URL olarak saklanmaktadır.
@@ -89,13 +92,12 @@ API dökümantasyonu bir **Postman Collection** olarak sağlanmıştır. Aşağ�
 |---------------------|--------------------|
 | ![CreateCourse](https://github.com/user-attachments/assets/92b984ee-d025-4757-a03b-ae5a74da6c76) | ![Basket-Payment](https://github.com/user-attachments/assets/7eac73bb-4d8c-4702-9377-ad43c54329aa) |
 
-| **Dosya Yönetimi** |
-|--------------------|
-| ![FileManagment](https://github.com/user-attachments/assets/43fe2445-dcf6-4a0e-be51-468a67fbe43c) |
+| **Dosya Yönetimi** | **Seq Log Ekranı** |
+|--------------------|--------------------|
+| ![FileManagment](https://github.com/user-attachments/assets/43fe2445-dcf6-4a0e-be51-468a67fbe43c) | ![seq-visualizer](https://github.com/user-attachments/assets/60706460-8d22-4b2f-9bce-f675ad63db1e) |
 
 ---
 | **Veritabanı İlişkileri** |
 |--------------------|
 | ![image](https://github.com/user-attachments/assets/f4b33085-f262-4691-9113-07f105ca617b)
 | 
-
