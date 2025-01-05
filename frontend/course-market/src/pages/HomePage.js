@@ -82,7 +82,10 @@ function HomePage() {
                             setCurrentPage(page);
                             setIsSearchActive(true);
                         }}
-                        setCategoryTerm={setCategoryTerm}
+                        setCategoryTerm={(term) => {
+                            setCategoryTerm(term);
+                            setSearchTerm("");
+                        }}
                     />
                     <SearchByName
                         setCourses={(data) => {
@@ -94,7 +97,10 @@ function HomePage() {
                             setCurrentPage(page);
                             setIsSearchActive(true);
                         }}
-                        setSearchTerm={setSearchTerm}
+                        setSearchTerm={(term) => {
+                            setSearchTerm(term);
+                            setCategoryTerm("");
+                        }}
                     />
                     {isSearchActive && (
                         <button
